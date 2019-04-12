@@ -1,11 +1,11 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include "frontend/lexer/coords.hpp"
 #include <algorithm>
 #include <iostream>
 #include <string>
 #include <vector>
+#include "frontend/lexer/coords.hpp"
 
 namespace lexem {
 enum Type {

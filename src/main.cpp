@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "frontend/lexer/scanner.hpp"
+#include "frontend/parser/parser.hpp"
 
 void test_params(int argc, char* argv[]) {
     if (argc < 2) {
@@ -25,6 +26,17 @@ int main(int argc, char* argv[])
     Scanner scan (argv[1]);
     while (scan.nextToken().type() != lexem::END_OF_FILE);
     scan.print_errors();
+//    Scanner scan("../prog.txt");
+//    Parser p(scan);
+//    p.print_errors();
+//    if (p.entry_point) p.entry_point->print();
+//    llvm::InitializeNativeTarget();
+//    llvm::InitializeNativeTargetAsmPrinter();
+//    llvm::InitializeNativeTargetAsmParser();
+//    compiler::Module = new llvm::Module("lab2", compiler::localContext);
+//    p.entry_point->codegen();
+//    compiler::Module->dump();
+//    delete compiler::Module;
     return 0;
 }
 

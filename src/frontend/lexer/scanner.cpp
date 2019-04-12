@@ -1,8 +1,8 @@
 #include "frontend/lexer/scanner.hpp"
-#include "common.h"
 #include <cctype>
 #include <iostream>     // std::cout
 #include <fstream>      // std::ifstream
+#include "common.h"
 
 /*
 class Scanner {

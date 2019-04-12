@@ -1,11 +1,11 @@
 #ifndef SCANNER_H
 #define SCANNER_H
 
-#include "frontend/lexer/token.hpp"
-#include "frontend/lexer/coords.hpp"
 #include <list>
 #include <string>
 #include <unordered_map>
+#include "frontend/lexer/token.hpp"
+#include "frontend/lexer/coords.hpp"
 
 class Scanner {
     std::string program;

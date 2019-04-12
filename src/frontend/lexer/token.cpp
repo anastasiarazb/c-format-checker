@@ -1,6 +1,6 @@
 #include "frontend/lexer/token.hpp"
-#include "common.h"
 #include <algorithm>
+#include "common.h"
 
 
 using namespace lexem;
