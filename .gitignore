@@ -1,0 +1,7 @@
+bin/
+cmake-build-debug
+.idea/
+*.iml
+misc.xml
+modules.xml
+vcs.xml
