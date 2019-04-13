@@ -352,7 +352,7 @@ inline void Scanner::clearCounters()
 
 void Scanner::add_error(std::string message)
 {
-    std::string str = "Error at " + cur_pos.to_string() + ": "
+    std::string str = "Error at " + std::string(cur_pos) + ": "
                       + message;
     errors_list.push_back(str);
 }

@@ -11,10 +11,10 @@ void Coords::shift(int ch) {
     }
 }
 
-std::string Coords::to_string() const {
+Coords::operator std::string() const {
     return std::string("(") + std::to_string(line) + std::string(", ") + std::to_string(col)  +  std::string(")");
 }
 
 std::string Coords::coords_to_string(const Coords &start, const Coords &follow) {
-    return start.to_string() + std::string("-") + follow.to_string();
+    return std::string(start) + std::string("-") + std::string(follow);
 }

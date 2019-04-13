@@ -88,7 +88,7 @@ public:
     inline bool is_in(const std::vector<lexem::Type> &set) const {
         return std::find(set.begin(), set.end(), m_type) != set.end();
     }
-    std::string to_string() const;
+    explicit operator std::string() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Token& obj);

@@ -85,7 +85,7 @@ Coords Token::follow() const {
     return m_follow;
 }
 
-std::string Token::to_string() const
+Token::operator std::string() const
 {
     std::string repr = lexem::to_string(m_type) + " " + coords_to_string() + ": <" + std::string(m_image) + ">";
     return repr;
@@ -93,5 +93,5 @@ std::string Token::to_string() const
 
 std::ostream& operator<<(std::ostream& os, const Token& obj)
 {
-    return os << obj.to_string();
+    return os << std::string(obj);
 }

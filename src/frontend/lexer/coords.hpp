@@ -9,7 +9,7 @@ class Coords
 public:
     Coords() = default;
     void shift(int ch);
-    std::string to_string() const;
+    explicit operator std::string() const;
     static std::string coords_to_string(const Coords &start, const Coords &follow);
 };
 
