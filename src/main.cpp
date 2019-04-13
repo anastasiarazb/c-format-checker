@@ -23,7 +23,11 @@ int main(int argc, char* argv[])
 {
     test_params(argc, argv);
     Scanner scan (argv[1]);
-    while (scan.nextToken().type() != lexem::END_OF_FILE);
+    Token token;
+    do {
+        token = scan.nextToken();
+        std::cout << "  " << "TOKEN " << token << std::endl;
+    } while (token.type() != lexem::END_OF_FILE);
     scan.print_errors();
     return 0;
 }

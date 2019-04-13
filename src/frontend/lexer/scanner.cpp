@@ -40,12 +40,6 @@ public:
 
 */
 
-std::ostream& operator<<(std::ostream& os, const Token& obj)
-{
-    return os << to_string(obj.type()) <<
-              ": <" << obj.image() << ">";
-}
-
 Scanner::Scanner(const char *path)
 {
     std::ifstream file (path, std::ios::in);
@@ -91,10 +85,6 @@ inline std::string_view Scanner::image() const
 
 inline Token Scanner::tokenOfType(lexem::Type type)
 {
-#ifdef DEBUG_LEXER
-    std::cout << "  TOKEN " << to_string(type) << " " << Coords::coords_to_string(start_pos, cur_pos) <<
-              " <" << image() << ">" << std::endl;
-#endif
     return Token(type, image(), start_pos, cur_pos);
 }
 

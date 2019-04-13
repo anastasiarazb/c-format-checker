@@ -59,9 +59,11 @@ enum Type {
     END_OF_FILE,
     ERROR
 };
-} //namespace lexem
 
 std::string to_string(lexem::Type t);
+
+} //namespace lexem
+
 
 class Token {
     lexem::Type m_type;
@@ -84,6 +86,7 @@ public:
     inline bool is_in(const std::vector<lexem::Type> &set) const {
         return std::find(set.begin(), set.end(), m_type) != set.end();
     }
+    std::string to_string() const;
 };
 
 std::ostream& operator<<(std::ostream& os, const Token& obj);

@@ -3,11 +3,11 @@
 #include <algorithm>
 
 
-using namespace lexem;
+//using namespace lexem;
 
-std::string to_string(lexem::Type t)
+std::string lexem::to_string(lexem::Type t)
 {
-#define RETURN_NAME(p) case(p): return std::string(#p);
+#define RETURN_NAME(p) case(lexem:: p): return std::string(#p);
     switch(t){
         RETURN_NAME(LPAREN);
         RETURN_NAME(RPAREN);
@@ -61,7 +61,7 @@ std::string to_string(lexem::Type t)
 #undef RETURN_NAME
 }
 
-Token::Token(Type type, std::string_view image, Coords start, Coords follow):
+Token::Token(lexem::Type type, std::string_view image, Coords start, Coords follow):
     m_type(type), m_image(image), m_start(start), m_follow(follow) {}
 
 Token::Token(Token &&tok):
@@ -84,4 +84,15 @@ Coords Token::start() const {
 
 Coords Token::follow() const {
     return m_follow;
+}
+
+std::string Token::to_string() const
+{
+    std::string repr = lexem::to_string(m_type) + " " + coords_to_string() + ": <" + std::string(m_image) + ">";
+    return repr;
+}
+
+std::ostream& operator<<(std::ostream& os, const Token& obj)
+{
+    return os << obj.to_string();
 }
