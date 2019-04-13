@@ -56,6 +56,8 @@ enum Type {
     TYPEDEF,
     WHILE,
 
+
+    WHITESPACE,
     END_OF_FILE,
     ERROR
 };

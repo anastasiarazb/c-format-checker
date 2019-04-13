@@ -61,7 +61,7 @@ def get_word(line):
     return line.strip()
     
 def wrapper(word):
-    return "        RETURN_NAME(" + word + ");"
+    return '{}RETURN_NAME({});'.format(' ' * 8, word)
 
 
 if __name__=='__main__':
@@ -84,19 +84,18 @@ if __name__=='__main__':
     with open('src/frontend/lexer/token.cpp', 'r') as f:
         output_old = f.read()
         print(output_old)
-
-    with open('src/frontend/lexer/token.cpp', 'w') as f:
         aim_re = re.compile(r'''
-#define RETURN_NAME\(p\) case\(p\): return std::string\(#p\);
+#define RETURN_NAME\(p\) case\(lexem::p\): return std::string\(#p\);
     switch\(t\){
 (.*)
-        default: return "undefined lex type";
-    ''', re.U | re.DOTALL)
+        default:.*;
+''', re.U | re.DOTALL)
 
         old = aim_re.search(output_old).group(1)
         print(old)
 
         output = output_old.replace(old, output)
-
-        print(output)
-        f.write(output)
+        if output:
+            with open('src/frontend/lexer/token.cpp', 'w') as f:
+                print(output)
+                f.write(output)

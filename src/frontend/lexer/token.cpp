@@ -3,11 +3,9 @@
 #include <algorithm>
 
 
-//using namespace lexem;
-
 std::string lexem::to_string(lexem::Type t)
 {
-#define RETURN_NAME(p) case(lexem:: p): return std::string(#p);
+#define RETURN_NAME(p) case(lexem::p): return std::string(#p);
     switch(t){
         RETURN_NAME(LPAREN);
         RETURN_NAME(RPAREN);
@@ -54,6 +52,7 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(THEN);
         RETURN_NAME(TYPEDEF);
         RETURN_NAME(WHILE);
+        RETURN_NAME(WHITESPACE);
         RETURN_NAME(END_OF_FILE);
         RETURN_NAME(ERROR);
         default: return "undefined lex type";
