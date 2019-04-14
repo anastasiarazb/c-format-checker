@@ -1,6 +1,7 @@
 #include "frontend/lexer/token.hpp"
 #include "common.h"
 #include <algorithm>
+#include <unordered_map>
 
 
 std::string lexem::to_string(lexem::Type t)
@@ -53,6 +54,7 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(TYPEDEF);
         RETURN_NAME(WHILE);
         RETURN_NAME(WHITESPACE);
+        RETURN_NAME(NEWLINE);
         RETURN_NAME(END_OF_FILE);
         RETURN_NAME(ERROR);
         default: return "undefined lex type";
@@ -77,6 +79,29 @@ std::string_view Token::image() const {
     return m_image;
 }
 
+std::string Token::image_escaped() const {
+    if (m_type == lexem::END_OF_FILE) {
+        return "<EOF>";
+    }
+    std::string escaped;
+    escaped.reserve(m_image.size() * 2);
+    static std::unordered_map<char, std::string> images ({
+        {'\t', std::string("\\t")},
+        {'\r', std::string("\\r")},
+        {'\n', std::string("\\n")},
+        {' ', std::string("␣")}
+    });
+    for (char c: m_image) {
+        if (images.count(c)) {
+            escaped.append(images[c]);
+        } else {
+            escaped.push_back(c);
+        }
+    }
+
+    return escaped;
+}
+
 Coords Token::start() const {
     return m_start;
 }
@@ -87,8 +112,8 @@ Coords Token::follow() const {
 
 Token::operator std::string() const
 {
-    std::string repr = lexem::to_string(m_type) + " " + coords_to_string() + ": <" + std::string(m_image) + ">";
-    return repr;
+    std::string res = lexem::to_string(m_type) + " " + coords_to_string() + ": <" + image_escaped() + ">";
+    return res;
 }
 
 std::ostream& operator<<(std::ostream& os, const Token& obj)

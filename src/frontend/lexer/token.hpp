@@ -57,7 +57,8 @@ enum Type {
     WHILE,
 
 
-    WHITESPACE,
+    WHITESPACE, // [' ''\t']*
+    NEWLINE,    // \r\n | \n
     END_OF_FILE,
     ERROR
 };
@@ -82,6 +83,7 @@ public:
     inline bool operator!=(lexem::Type type) const { return m_type != type; }
     lexem::Type       type()   const;
     std::string_view  image()  const;
+    std::string       image_escaped() const;
     Coords            start()  const;
     Coords            follow() const;
     inline std::string coords_to_string() const { return Coords::coords_to_string(m_start, m_follow); }

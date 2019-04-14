@@ -25,6 +25,7 @@ class Scanner {
     void  skipWhitespaces();
     bool  reachedEOF();
     Token scanWhitespaces();
+    Token scanNewline();
     Token scanIdent();
     Token scanNum();
     Token scanString();
@@ -34,10 +35,10 @@ class Scanner {
     void  clearCounters();
     void  rollbackCounters();
     Token tokenOfType(lexem::Type type);
-    void  add_error(std::string message);
+    void  add_error(const std::string &message);
     std::list<std::string> errors_list;
 public:
-    Scanner(const char *path);
+    explicit Scanner(const char *path);
     Token nextToken();
     void  print_errors();
 };

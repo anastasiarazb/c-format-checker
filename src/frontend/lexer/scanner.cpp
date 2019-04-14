@@ -4,42 +4,6 @@
 #include <iostream>     // std::cout
 #include <fstream>      // std::ifstream
 
-/*
-class Scanner {
-    std::string program;
-    std::unordered_map<std::string_view, lexem::Type> keywords2type;
-    const char *start_ptr = nullptr;
-    const char *cur_ptr = nullptr;
-    Coords start_pos;
-    Coords cur_pos;
-    char  cur_char;
-    int   token_len;
-    void  skipWhitespaces();
-    enum CommentStyle {
-        ONELINE, MULTYLINE
-    };
-    void  skipComment(CommentStyle type);
-    Token scanIdent();
-    bool  isKeyword(std::string_view word);
-    bool  reachedEOF();
-    Token scanNum();
-    Token scanString();
-    Token scanChar();
-    void  nextChar();
-    inline char peekNext();
-    void  clearCounters();
-    void  rollbackCounters();
-    Token tokenOfType(lexem::Type type);
-    void  add_error(std::string message);
-    std::list<std::string> errors_list;
-public:
-    Scanner(const char *path);
-    Token nextToken();
-    void  print_errors();
-};
-
-*/
-
 Scanner::Scanner(const char *path)
 {
     std::ifstream file (path, std::ios::in);
@@ -110,14 +74,24 @@ void Scanner::skipComment(CommentStyle type) {
             nextChar(); // next
             return;
         case CommentStyle::ONELINE:
+            // One line comments can be propagated to the next line by "\", if it is the last non-whitespace symbol \
+               in the line \
+               and so on
             while (!reachedEOF() && cur_char != '\n') {
+                if (cur_char == '\\') {
+                    nextChar();
+                    while (isspace(cur_char) && cur_char != '\n') { // skip whitespaces
+                        nextChar();
+                    }
+                    if (cur_char == '\n') {  // '\' was the last non-whitespace symbol in the line
+                        nextChar();  // go to newline and continue
+                        continue;
+                    } else if (reachedEOF()) {
+                        return;
+                    }
+                }
                 nextChar();
             }
-            if (reachedEOF()) {
-                generate_error("<newline>");
-                return;
-            }
-            nextChar();
             return;
     }
 }
@@ -126,9 +100,15 @@ void Scanner::skipComment(CommentStyle type) {
 
 Token Scanner::nextToken()
 {
-    skipWhitespaces();
+//    skipWhitespaces();
     clearCounters();
     switch (cur_char) {
+        case ' ':
+        case '\t':
+            return scanWhitespaces();
+        case '\r':
+        case '\n':
+            return scanNewline();
         case '(':
             nextChar();
             return tokenOfType(lexem::LPAREN);
@@ -321,25 +301,28 @@ Token Scanner::nextToken()
     }
 }
 
-Token Scanner::scanWhitespaces() {
-    while(!reachedEOF() && isspace(cur_char)) {
 
-    }
-    while(!reachedEOF()
-          && (cur_char == ' '
-           || cur_char == '\t')) {
+void Scanner::skipWhitespaces() {
+    while(cur_char == ' ' || cur_char == '\t') {
         nextChar();
     }
 }
 
-void Scanner::skipWhitespaces() {
-    while(isspace(cur_char)) {
+Token Scanner::scanWhitespaces() {
+    while(cur_char == ' ' || cur_char == '\t') {
         nextChar();
     }
-//    while(isspace(*cur_ptr)) {
-//        cur_pos.shift(*cur_ptr);
-//        ++cur_ptr;
-//    }
+    return tokenOfType(lexem::WHITESPACE);
+}
+
+Token Scanner::scanNewline() {
+    if(!reachedEOF() && cur_char == '\r') {
+        nextChar();
+    }
+    if(!reachedEOF() && cur_char == '\n') {
+        nextChar();
+    }
+    return tokenOfType(lexem::NEWLINE);
 }
 
 inline char Scanner::peekNext() {
@@ -364,7 +347,7 @@ inline void Scanner::clearCounters()
     token_len = 0;
 }
 
-void Scanner::add_error(std::string message)
+void Scanner::add_error(const std::string &message)
 {
     std::string str = "Error at " + std::string(cur_pos) + ": "
                       + message;

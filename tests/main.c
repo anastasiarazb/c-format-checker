@@ -7,7 +7,9 @@ int main(void)
     long long a;                 //Текущий коэффицент
     long long i;                 //Счетчик
     long long result, diff;      //Значение полинома и его производной
-    scanf("%lld", &result);  //Пусть стартовое значение равно первому индексу (результат для 0-й степени)
+    scanf("%lld", &result);  //Пусть стартовое значение равно первому индексу (результат для 0-й степени) \
+    тест многострочного комментария\
+
     diff = result*n;       //  а его производная - произведению первого индекса и степени при старшем х.
     for(i = 1; i <= n; ++i) {
         scanf("%lld", &a);
@@ -19,4 +21,4 @@ int main(void)
     return 0;
 }
 
-// valgrind ~/Qt/1module/1-polynom-Debug/1-polynom
+// valgrind ~/Qt/1module/1-polynomial-Debug/1-polynomial
