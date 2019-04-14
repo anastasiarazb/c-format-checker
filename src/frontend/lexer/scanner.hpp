@@ -19,7 +19,7 @@ class Scanner {
 
     std::string_view image() const;
     enum CommentStyle {
-        ONELINE, MULTYLINE
+        ONE_LINE, MULTI_LINE
     };
     void  skipComment(CommentStyle type);
     void  skipWhitespaces();

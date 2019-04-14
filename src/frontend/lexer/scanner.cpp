@@ -7,20 +7,22 @@
 Scanner::Scanner(const char *path)
 {
     std::ifstream file (path, std::ios::in);
-    if (file) {
-        file.seekg(0, std::ios::end);
-        program.reserve(file.tellg());
-        file.seekg(0, std::ios::beg);
-        program.assign((std::istreambuf_iterator<char>(file)),
-                       std::istreambuf_iterator<char>());
-        start_ptr = program.c_str();
-        cur_ptr = start_ptr;
-        cur_char = *(cur_ptr);
-        token_len = 0;
-    } else {
+    if (!file) {
         printf("No such file %s\n", path);
         exit(2);
     }
+
+    file.seekg(0, std::ios::end);
+    program.reserve(file.tellg());
+    file.seekg(0, std::ios::beg);
+    program.assign((std::istreambuf_iterator<char>(file)),
+                   std::istreambuf_iterator<char>());
+    file.close();
+
+    start_ptr = program.c_str();
+    cur_ptr = start_ptr;
+    cur_char = *(cur_ptr);
+    token_len = 0;
 
     keywords2type["auto"] = lexem::AUTO;
     keywords2type["case"] = lexem::CASE;
@@ -61,7 +63,7 @@ void Scanner::skipComment(CommentStyle type) {
         errors_list.push_back(message);
     };
     switch (type) {
-        case CommentStyle::MULTYLINE:
+        case CommentStyle::MULTI_LINE:
             while (!reachedEOF()
                    && ! (cur_char == '*' && peekNext() == '/')) {
                 nextChar();
@@ -73,7 +75,7 @@ void Scanner::skipComment(CommentStyle type) {
             nextChar(); // '/'
             nextChar(); // next
             return;
-        case CommentStyle::ONELINE:
+        case CommentStyle::ONE_LINE:
             // One line comments can be propagated to the next line by "\", if it is the last non-whitespace symbol \
                in the line \
                and so on
@@ -159,7 +161,7 @@ Token Scanner::nextToken()
         case '/':
             nextChar();
             if (cur_char == '/') {
-                skipComment(CommentStyle::ONELINE);  // '//'
+                skipComment(CommentStyle::ONE_LINE);  // '//'
                 return nextToken();
             } else if (cur_char == '=') {
                 nextChar();
