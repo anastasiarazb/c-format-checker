@@ -88,17 +88,6 @@ inline Token Scanner::tokenOfType(lexem::Type type)
     return Token(type, image(), start_pos, cur_pos);
 }
 
-void Scanner::skipWhitespaces() {
-    while(isspace(*cur_ptr)) {
-        cur_pos.shift(*cur_ptr);
-        ++cur_ptr;
-    }
-}
-
-inline char Scanner::peekNext() {
-    return *(cur_ptr + 1);
-}
-
 void Scanner::skipComment(CommentStyle type) {
     nextChar();
     auto generate_error = [this](const char *expected_sequence) {
@@ -330,6 +319,31 @@ Token Scanner::nextToken()
 
             }
     }
+}
+
+Token Scanner::scanWhitespaces() {
+    while(!reachedEOF() && isspace(cur_char)) {
+
+    }
+    while(!reachedEOF()
+          && (cur_char == ' '
+           || cur_char == '\t')) {
+        nextChar();
+    }
+}
+
+void Scanner::skipWhitespaces() {
+    while(isspace(cur_char)) {
+        nextChar();
+    }
+//    while(isspace(*cur_ptr)) {
+//        cur_pos.shift(*cur_ptr);
+//        ++cur_ptr;
+//    }
+}
+
+inline char Scanner::peekNext() {
+    return *(cur_ptr + 1);
 }
 
 //Прочитать следующий символ из программы

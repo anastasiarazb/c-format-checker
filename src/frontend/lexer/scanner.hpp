@@ -18,13 +18,14 @@ class Scanner {
     int   token_len;
 
     std::string_view image() const;
-    void  skipWhitespaces();
     enum CommentStyle {
         ONELINE, MULTYLINE
     };
     void  skipComment(CommentStyle type);
-    Token scanIdent();
+    void  skipWhitespaces();
     bool  reachedEOF();
+    Token scanWhitespaces();
+    Token scanIdent();
     Token scanNum();
     Token scanString();
     Token scanChar();
