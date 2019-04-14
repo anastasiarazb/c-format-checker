@@ -211,31 +211,8 @@ Token Scanner::nextToken()
             }
             return tokenOfType(lexem::AMPERSAND);  // '&' : a & b, &p
         case '<':
-            nextChar();
-            if (cur_char == '=') { // '<='
-                nextChar();
-            } else if (cur_char == '<') {
-                nextChar();
-                if (cur_char == '=') {
-                    nextChar();
-                    return tokenOfType(lexem::ASSIGNOP);  // '<<='
-                }
-                return tokenOfType(lexem::OPERATOR);  // '<<'
-            }
-            return tokenOfType(lexem::COMPAREOP); // '<', '<='
         case '>':
-            nextChar();
-            if (cur_char == '=') {  // '>='
-                nextChar();
-            } else if (cur_char == '>') {
-                nextChar();
-                if (cur_char == '=') {
-                    nextChar();
-                    return tokenOfType(lexem::ASSIGNOP);  // '>>='
-                }
-                return tokenOfType(lexem::OPERATOR);  // '>>'
-            }
-            return tokenOfType(lexem::COMPAREOP);  // '>', '>='
+            return scanAngleOp();  // '>', '>>', '>>=', '<', '<<', '<<=', LANGLE, RANGLE, OPERATOR, ASSIGNOP
         case '!':
             nextChar();
             if (cur_char == '=') {  // '!='
@@ -410,6 +387,23 @@ Token Scanner::scanChar() {
     }
     nextChar();
     return tokenOfType(lexem::CHAR);
+}
+
+Token Scanner::scanAngleOp() {
+    char angle_symbol = cur_char;
+    nextChar();
+    if (cur_char == '=') {  // '<='
+        nextChar();
+        return tokenOfType(lexem::COMPAREOP);  // '<='
+    } else if (cur_char == angle_symbol) {
+        nextChar();
+        if (cur_char == '=') {
+            nextChar();
+            return tokenOfType(lexem::ASSIGNOP);  // '<<='
+        }
+        return tokenOfType(lexem::OPERATOR);  // '<<'
+    }
+    return tokenOfType(angle_symbol == '<' ? lexem::LANGLE : lexem::RANGLE);  // '<', '>'
 }
 
 Token Scanner::scanNum() {

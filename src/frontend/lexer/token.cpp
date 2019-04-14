@@ -14,6 +14,8 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(RBRACKET);
         RETURN_NAME(LBRACE);
         RETURN_NAME(RBRACE);
+        RETURN_NAME(LANGLE);
+        RETURN_NAME(RANGLE);
         RETURN_NAME(BACKSLASH);
         RETURN_NAME(SEMICOLON);
         RETURN_NAME(COLON);

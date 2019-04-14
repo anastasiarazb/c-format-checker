@@ -15,6 +15,8 @@ enum Type {
     RBRACKET,  // ],
     LBRACE,    // {
     RBRACE,    // }
+    LANGLE,    // <
+    RANGLE,    // >
     BACKSLASH, // '\'
     SEMICOLON, // ;
     COLON,     // :
@@ -60,7 +62,7 @@ enum Type {
     WHITESPACE, // [' ''\t']*
     NEWLINE,    // \r\n | \n
     END_OF_FILE,
-    ERROR
+    ERROR   // not used yet
 };
 
 std::string to_string(lexem::Type t);

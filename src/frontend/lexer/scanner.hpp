@@ -30,6 +30,7 @@ class Scanner {
     Token scanNum();
     Token scanString();
     Token scanChar();
+    Token scanAngleOp();
     void  nextChar();
     char  peekNext();
     void  clearCounters();
