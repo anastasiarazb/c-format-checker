@@ -78,12 +78,12 @@ if __name__=='__main__':
 
     output = '\n'.join(wrapper(word) for word in words_list if word)
     print(output)
-    with open('codegen_output.txt', 'w') as f:
-        f.write(output)
+    # with open('codegen_output.txt', 'w') as f:
+    #    f.write(output)
 
     with open('src/frontend/lexer/token.cpp', 'r') as f:
         output_old = f.read()
-        print(output_old)
+        # print(output_old)
         aim_re = re.compile(r'''
 #define RETURN_NAME\(p\) case\(lexem::p\): return std::string\(#p\);
     switch\(t\){
@@ -92,10 +92,10 @@ if __name__=='__main__':
 ''', re.U | re.DOTALL)
 
         old = aim_re.search(output_old).group(1)
-        print(old)
+        # print(old)
 
         output = output_old.replace(old, output)
         if output:
             with open('src/frontend/lexer/token.cpp', 'w') as f:
-                print(output)
+                # print(output)
                 f.write(output)
