@@ -1,0 +1,12 @@
+{
+    "struct" : ["+"],
+    "enum" : ["+"],
+    "union" : ["+"],
+    "function" : ["+"],
+    "if-else-while-do" : ["+"],
+    "label" : ["start", "0"],
+    "switch_statement" : ["+"],
+    "case" : ["0", "+"],
+    "block" : ["+"],
+    "preprocess" : ["start"]
+}
