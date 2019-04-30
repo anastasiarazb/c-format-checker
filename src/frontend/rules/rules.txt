@@ -1,0 +1,2 @@
+struct, enum, func definition with {} : ++ intend
+switch-case : 'case' & 'default'++ or 00, other: ++
