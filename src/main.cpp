@@ -1,15 +1,17 @@
 #include <iostream>
 #include <fstream>
 #include <typeinfo>
+#include <vector>
 
 #include "../include/nlohmann/json.hpp"
 #include "frontend/lexer/scanner.hpp"
+#include "frontend/rules/rules.h"
 
 using json = nlohmann::json;
 
 void test_params(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cout << "Too less arguments!\n Usages: <progam_source_file>\n. Please, try again!"
+        std::cout << "Too less arguments!\n Usages: <program_source_file>\n. Please, try again!"
                   << std::endl;
         exit(1);
     }
@@ -24,7 +26,7 @@ void test_params(int argc, char* argv[]) {
 
 }
 
-json parse_rules(std::string path)
+json read_rules(std::string path)
 {
     std::ifstream file (path, std::ios::in);
     if (!file) {
@@ -44,12 +46,12 @@ json parse_rules(std::string path)
 
 int main(int argc, char* argv[])
 {
-    json j = parse_rules("../rules.json");
-    std::cout << j["case"][1] << '\n'
-        << typeid(j["case"][1]).name() << '\n'
-        << typeid(j["case"]).name() << '\n'
-        << typeid(char *).name() << '\n' << typeid(char []).name() << std::endl;
-    std::cout << (typeid(j["case"][0]).name() == typeid(char[]).name()) << std::endl;
+//    json j = read_rules("../rules.json");
+//    std::vector<std::string> arr = j["case"];
+//    std::cout << arr.size() << j["case"] << (j["case"].type() == json::value_t::array) << std::endl;
+//    std::cout << (typeid(j["case"][0]).name() == typeid(char[]).name()) << std::endl;
+    Rules r("../rules.json");
+    std::cout << r << std::endl;
 //    test_params(argc, argv);
 //    Scanner scan (argv[1]);
 //    Token token;

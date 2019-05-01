@@ -5,8 +5,9 @@
     "function" : ["+"],
     "if-else-while-do" : ["+"],
     "label" : ["start", "0"],
-    "switch_statement" : ["+"],
     "case" : ["0", "+"],
+    "case_statement" : ["+"],
     "block" : ["+"],
-    "preprocess" : ["start"]
+    "pragma" : ["start"],
+    "cortege" : ["any"]
 }
