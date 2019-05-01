@@ -1,0 +1,10 @@
+#ifndef C_FORMAT_CHECKER_PARSER_HPP
+#define C_FORMAT_CHECKER_PARSER_HPP
+
+
+class Parser {
+
+};
+
+
+#endif //C_FORMAT_CHECKER_PARSER_HPP

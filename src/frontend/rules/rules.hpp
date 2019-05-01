@@ -1,5 +1,5 @@
-#ifndef C_FORMAT_CHECKER_RULES_H
-#define C_FORMAT_CHECKER_RULES_H
+#ifndef C_FORMAT_CHECKER_RULES_HPP
+#define C_FORMAT_CHECKER_RULES_HPP
 
 #include <unordered_map>
 #include <unordered_set>
@@ -34,4 +34,4 @@ std::string to_string(const Rules::Rule &obj);
 std::string to_string(const std::unordered_set<Rules::Rule> &obj);
 
 
-#endif //C_FORMAT_CHECKER_RULES_H
+#endif //C_FORMAT_CHECKER_RULES_HPP

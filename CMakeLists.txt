@@ -8,4 +8,4 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -std=c++17 -Wall -Wextra -Wno-unus
 
 file(GLOB_RECURSE UTIL_SOURCES "src/*.cpp")
 file(GLOB_RECURSE UTIL_HEADERS "src/*.h")
-add_executable(${PROJECT_NAME} ${UTIL_SOURCES} ${UTIL_HEADERS} src/frontend/rules/rules.cpp src/frontend/rules/rules.h)
+add_executable(${PROJECT_NAME} ${UTIL_SOURCES} ${UTIL_HEADERS})

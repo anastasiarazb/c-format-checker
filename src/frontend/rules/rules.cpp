@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <sstream>
-#include "rules.h"
+#include "rules.hpp"
 
 using json = nlohmann::json;
 
