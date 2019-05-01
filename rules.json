@@ -1,0 +1,13 @@
+{
+    "struct" : ["+"],
+    "enum" : ["+"],
+    "union" : ["+"],
+    "function" : ["+"],
+    "if-else-while-do" : ["+"],
+    "label" : ["start", "0"],
+    "case" : ["0", "+"],
+    "case_statement" : ["+"],
+    "block" : ["+"],
+    "pragma" : ["start"],
+    "cortege" : ["any"]
+}
