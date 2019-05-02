@@ -11,8 +11,8 @@ namespace lexem {
 enum Type {
     LPAREN,    // (
     RPAREN,    // )
-    LBRACKET,  // [,
-    RBRACKET,  // ],
+    LBRACKET,  // [
+    RBRACKET,  // ]
     LBRACE,    // {
     RBRACE,    // }
     LANGLE,    // <
@@ -21,14 +21,13 @@ enum Type {
     SEMICOLON, // ;
     COLON,     // :
     COMMA,     // ,
-    SINGLE_QUOTE, // '
     DOLLAR,    // $
     DOT,       // .
     ELLIPSIS,  // ...
     IDENT,     // [a-zA-Z][a-zA-Z0-9]*
     STRING,    // ".*"
     CHAR,      // '\n'
-    NUM,       // [0-9]*
+    NUM,       // [0-9a-fA-FuUlLxX]+(\.[0-9a-fA-FuUlLxX]+)?([eEpP][+-]?[0-9a-fA-FuUlLxX]+)?
     INC_DEC,   // ++, --
     OPERATOR,  // +, -, /, %, ~, |, ^, <<, >>, !, &&, ||
     ARROW,     // ->
@@ -40,29 +39,22 @@ enum Type {
     AMPERSAND, // &
     QUESTIONMARK, // ?
     /* KEYWORDS */
-    AUTO,
     CASE,
-    CONST,
     DEFAULT,
     DO,
     ELSE,
     ENUM,
     FOR,
-    GOTO,
     IF,
-    LABEL,
-    RETURN,
     STRUCT,
     SWITCH,
-    THEN,
-    TYPEDEF,
     WHILE,
 
 
     WHITESPACE, // [' ''\t']*
     NEWLINE,    // \r\n | \n
     END_OF_FILE,
-    ERROR   // not used yet
+    ERROR   // now used only for uninitialized tokens
 };
 
 std::string to_string(lexem::Type t);
@@ -71,15 +63,15 @@ std::string to_string(lexem::Type t);
 
 
 class Token {
-    lexem::Type m_type;
+    lexem::Type m_type = lexem::Type::ERROR;
     std::string_view m_image;
     Coords m_start;
     Coords m_follow;
 public:
     Token() = default;
     Token(lexem::Type type, std::string_view image, Coords start, Coords follow);
-    Token(Token &&tok);
-    Token(const Token &tok);
+    Token(Token &&tok) noexcept;
+    Token(const Token &tok) = default;
     Token& operator=(const Token&) = default;
     inline bool operator==(lexem::Type type) const { return m_type == type; }
     inline bool operator!=(lexem::Type type) const { return m_type != type; }

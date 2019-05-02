@@ -20,7 +20,6 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(SEMICOLON);
         RETURN_NAME(COLON);
         RETURN_NAME(COMMA);
-        RETURN_NAME(SINGLE_QUOTE);
         RETURN_NAME(DOLLAR);
         RETURN_NAME(DOT);
         RETURN_NAME(ELLIPSIS);
@@ -38,22 +37,20 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(DOUBLEHASH);
         RETURN_NAME(AMPERSAND);
         RETURN_NAME(QUESTIONMARK);
-        RETURN_NAME(AUTO);
+//        RETURN_NAME(AUTO);
         RETURN_NAME(CASE);
-        RETURN_NAME(CONST);
+//        RETURN_NAME(CONST);
         RETURN_NAME(DEFAULT);
         RETURN_NAME(DO);
         RETURN_NAME(ELSE);
         RETURN_NAME(ENUM);
         RETURN_NAME(FOR);
-        RETURN_NAME(GOTO);
+//        RETURN_NAME(GOTO);
         RETURN_NAME(IF);
-        RETURN_NAME(LABEL);
-        RETURN_NAME(RETURN);
+//        RETURN_NAME(RETURN);
         RETURN_NAME(STRUCT);
         RETURN_NAME(SWITCH);
-        RETURN_NAME(THEN);
-        RETURN_NAME(TYPEDEF);
+//        RETURN_NAME(TYPEDEF);
         RETURN_NAME(WHILE);
         RETURN_NAME(WHITESPACE);
         RETURN_NAME(NEWLINE);
@@ -67,10 +64,7 @@ std::string lexem::to_string(lexem::Type t)
 Token::Token(lexem::Type type, std::string_view image, Coords start, Coords follow):
     m_type(type), m_image(image), m_start(start), m_follow(follow) {}
 
-Token::Token(Token &&tok):
-    m_type(tok.m_type), m_image(tok.m_image), m_start(tok.m_start), m_follow(tok.m_follow) {}
-
-Token::Token(const Token &tok):
+Token::Token(Token &&tok) noexcept :
     m_type(tok.m_type), m_image(tok.m_image), m_start(tok.m_start), m_follow(tok.m_follow) {}
 
 lexem::Type Token::type() const {

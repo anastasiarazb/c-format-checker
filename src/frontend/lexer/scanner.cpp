@@ -25,23 +25,16 @@ Scanner::Scanner(const char *path)
     cur_char = *(cur_ptr);
     token_len = 0;
 
-    keywords2type["auto"] = lexem::AUTO;
     keywords2type["case"] = lexem::CASE;
-    keywords2type["const"] = lexem::CONST;
     keywords2type["default"] = lexem::DEFAULT;
     keywords2type["do"] = lexem::DO;
     keywords2type["else"] = lexem::ELSE;
     keywords2type["enum"] = lexem::ENUM;
     keywords2type["for"] = lexem::FOR;
     keywords2type["while"] = lexem::WHILE;
-    keywords2type["goto"] = lexem::GOTO;
     keywords2type["if"] = lexem::IF;
-    keywords2type["label"] = lexem::LABEL;
-    keywords2type["return"] = lexem::RETURN;
     keywords2type["struct"] = lexem::STRUCT;
     keywords2type["switch"] = lexem::SWITCH;
-    keywords2type["then"] = lexem::THEN;
-    keywords2type["typedef"] = lexem::TYPEDEF;
     keywords2type["while"] = lexem::WHILE;
 }
 
@@ -272,7 +265,7 @@ Token Scanner::nextToken()
             } else {
                 nextChar();
                 std::string error_message =
-                        std::string("Error: Undeхpected symbol '") + std::string(start_ptr, cur_ptr) + std::string("' at ")
+                        std::string("Error: Unexpected symbol '") + std::string(start_ptr, cur_ptr) + std::string("' at ")
                         + Coords::coords_to_string(start_pos, cur_pos);
                 errors_list.push_back(error_message);
                 return nextToken();
