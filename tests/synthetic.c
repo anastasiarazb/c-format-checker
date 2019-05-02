@@ -10,6 +10,7 @@ int main(void) {
     523e-4;
     432e2;
     123e321;
+    1L; L"fsda";0x10.1p0-
     return_ i.i 1 i
     return 0;
 }

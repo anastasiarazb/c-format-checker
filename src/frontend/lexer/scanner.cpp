@@ -1,6 +1,7 @@
 #include "frontend/lexer/scanner.hpp"
 #include "common.h"
 #include <cctype>
+#include <unordered_set>
 #include <iostream>     // std::cout
 #include <fstream>      // std::ifstream
 
@@ -407,22 +408,22 @@ Token Scanner::scanAngleOp() {
 }
 
 Token Scanner::scanNum() {
-    auto skip_digit_sequence = [this]() {
-        while (isdigit(cur_char)) {
-            nextChar();
-        }
-    };
+    static std::unordered_set<char> letters(
+        {'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F' // hexadecimal characters
+        , 'l', 'L', 'u','U' // long/unsigned specifiers
+        , 'x', 'X' // hexadecimal specifiers
+        });
     auto skip_digit_char_sequence = [this]() {
-        while (isdigit(cur_char) || isalpha(cur_char)) {
+        while (isdigit(cur_char) || letters.find(cur_char) != letters.end()) {
             nextChar();
         }
     };
-    skip_digit_sequence();
+    skip_digit_char_sequence();
     if (cur_char == '.') { // fractional part
         nextChar();
-        skip_digit_sequence();
+        skip_digit_char_sequence();
     }
-    if (cur_char == 'e' || cur_char == 'E' || cur_char == 'x' || cur_char == 'X') { // scale factor | hexadecimal
+    if (cur_char == 'e' || cur_char == 'E' || cur_char == 'p' || cur_char == 'P') { // scale factor | hexadecimal
         nextChar();
         if (cur_char == '-' || cur_char == '+') {
             nextChar();
