@@ -96,12 +96,12 @@ void Scanner::skipComment(CommentStyle type) {
 
 Token Scanner::nextToken()
 {
-//    skipWhitespaces();
+    skipWhitespaces();
     clearCounters();
     switch (cur_char) {
-        case ' ':
-        case '\t':
-            return scanWhitespaces();
+//        case ' ':
+//        case '\t':
+//            return scanWhitespaces();
         case '\r':
         case '\n':
             return scanNewline();
@@ -281,20 +281,21 @@ void Scanner::skipWhitespaces() {
     }
 }
 
-Token Scanner::scanWhitespaces() {
-    while(cur_char == ' ' || cur_char == '\t') {
-        nextChar();
-    }
-    return tokenOfType(lexem::WHITESPACE);
-}
+//Token Scanner::scanWhitespaces() {
+//    while(cur_char == ' ' || cur_char == '\t') {
+//        nextChar();
+//    }
+//    return tokenOfType(lexem::WHITESPACE);
+//}
 
 Token Scanner::scanNewline() {
-    if(!reachedEOF() && cur_char == '\r') {
+    if (!reachedEOF() && cur_char == '\r') {
         nextChar();
     }
-    if(!reachedEOF() && cur_char == '\n') {
+    if (!reachedEOF() && cur_char == '\n') {
         nextChar();
     }
+    skipWhitespaces();
     return tokenOfType(lexem::NEWLINE);
 }
 

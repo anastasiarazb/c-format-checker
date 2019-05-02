@@ -51,8 +51,8 @@ enum Type {
     WHILE,
 
 
-    WHITESPACE, // [' ''\t']*
-    NEWLINE,    // \r\n | \n
+//    WHITESPACE, // [' ''\t']+
+    NEWLINE,    // [\r\n][WHITESPACE\r\n]*
     END_OF_FILE,
     ERROR   // now used only for uninitialized tokens
 };
@@ -81,9 +81,10 @@ public:
     Coords            start()  const;
     Coords            follow() const;
     inline std::string coords_to_string() const { return Coords::coords_to_string(m_start, m_follow); }
-    inline bool is_in(const std::vector<lexem::Type> &set) const {
+    inline bool in(const std::vector<lexem::Type> &set) const {
         return std::find(set.begin(), set.end(), m_type) != set.end();
     }
+//    bool in(std::initializer_list<lexem::Type> values);
     explicit operator std::string() const;
 };
 

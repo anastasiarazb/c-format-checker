@@ -52,7 +52,7 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(SWITCH);
 //        RETURN_NAME(TYPEDEF);
         RETURN_NAME(WHILE);
-        RETURN_NAME(WHITESPACE);
+//        RETURN_NAME(WHITESPACE);
         RETURN_NAME(NEWLINE);
         RETURN_NAME(END_OF_FILE);
         RETURN_NAME(ERROR);

@@ -23,8 +23,7 @@ class Scanner {
     };
     void  skipComment(CommentStyle type);
     void  skipWhitespaces();
-    bool  reachedEOF();
-    Token scanWhitespaces();
+//    Token scanWhitespaces();
     Token scanNewline();
     Token scanIdent();
     Token scanNum();
@@ -35,6 +34,7 @@ class Scanner {
     char  peekNext();
     void  clearCounters();
     void  rollbackCounters();
+    bool  reachedEOF();
     Token tokenOfType(lexem::Type type);
     void  add_error(const std::string &message);
     std::list<std::string> errors_list;
