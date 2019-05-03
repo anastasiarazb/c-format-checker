@@ -1,0 +1,113 @@
+translation_unit = statement translation_unit
+                 | eps .
+
+statement = simple_statement | cond_statement |
+
+
+words_seq = word word_seq | eps .
+
+word =    LBRACKET  // [
+     |    RBRACKET  // ]
+     |    LANGLE    // <
+     |    RANGLE    // >
+     |    COMMA     // ,
+     |    DOLLAR    // $
+     |    DOT       // .
+     |    ELLIPSIS  // ...
+     |    IDENT     // [a-zA-Z][a-zA-Z0-9]*
+     |    STRING    // ".*"
+     |    CHAR      // '\n'
+     |    NUM       // [0-9a-fA-FuUlLxX]+(\.
+     |    INC_DEC   // ++, --
+     |    OPERATOR  // +, -, /, %, ~, |, ^, <<, >>, !, &&, ||
+     |    ARROW     // ->
+     |    STAR      // *
+     |    ASSIGNOP  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+     |    COMPAREOP // >, <, !=, <=, =>, ==
+     |    AMPERSAND // &
+     |    pragma
+
+pragma = HASH line ( BACKSLASH NEWLINE? line )*
+line = <any_symbol except: BACKSLASH, NEWLINE>
+
+
+translation_unit
+    : external_declaration, translation_unit_lr
+    ;
+
+translation_unit_lr
+    : external_declaration, translation_unit_lr
+    | E
+    ;
+
+
+external_declaration
+    : function_definition
+    | declaration
+    ;
+
+function_definition
+    : declaration_specifiers, declarator, declaration_list, compound_statement
+    | declaration_specifiers, declarator, compound_statement
+    ;
+
+statement
+    : labeled_statement  // IDENT COLON
+    | compound_statement  // LBRACE block_item_list? RBRACE
+    | expression_statement  // (simple_expression ( COMMA simple_expression)*)? SEMICOLON
+    | selection_statement // IF ... (ELSE statement)? | SWITCH statement
+    | iteration_statement // WHILE, DO_WHILE, FOR
+    | jump_statement  // GOTO, continue, break, return
+    ;
+
+
+selection_statement
+    : IF, '(', expression, ')', statement, ELSE, statement
+    | IF, '(', expression, ')', statement
+    | SWITCH, '(', expression, ')', statement
+    ;
+
+iteration_statement
+    : WHILE, '(', expression, ')', statement
+    | DO, statement, WHILE, '(', expression, ')', ';'
+    | FOR, '(', expression_statement, expression_statement, ')', statement
+    | FOR, '(', expression_statement, expression_statement, expression, ')', statement
+    | FOR, '(', declaration, expression_statement, ')', statement
+    | FOR, '(', declaration, expression_statement, expression, ')', statement
+    ;
+
+jump_statement
+    : GOTO, IDENTIFIER, ';'
+    | CONTINUE, ';'
+    | BREAK, ';'
+    | RETURN, ';'
+    | RETURN, expression, ';'
+    ;
+
+labeled_statement
+    : IDENTIFIER, ':', statement
+    | CASE, constant_expression, ':', statement
+    | DEFAULT, ':', statement
+    ;
+
+compound_statement
+    : '{', '}'
+    | '{', block_item_list, '}'
+    ;
+
+
+expression
+    : simple_expression, expression_lr
+    ;
+
+expression_lr
+    : ',', simple_expression, expression_lr
+    | E
+    ;
+
+expression_statement
+    : ';'
+    | expression, ';'
+    ;
+
+simple_expression =

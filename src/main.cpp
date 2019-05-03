@@ -2,6 +2,7 @@
 #include <fstream>
 #include <typeinfo>
 #include <vector>
+#include <frontend/parser/parser.hpp>
 
 #include "../include/nlohmann/json.hpp"
 #include "frontend/lexer/scanner.hpp"
@@ -53,14 +54,18 @@ int main(int argc, char* argv[])
     Rules r("../rules.json");
     std::cout << "Rules:\n" << r << std::endl;
     test_params(argc, argv);
-    Scanner scan (argv[1]);
+    Scanner scan0 (argv[1]);
     Token token;
-    std::cout << "Tokens:\n" << r << std::endl;
+    std::cout << "Tokens:\n" << std::endl;
     do {
-        token = scan.nextToken();
+        token = scan0.nextToken();
         std::cout << "  " << "TOKEN " << token << std::endl;
     } while (token.type() != lexem::END_OF_FILE);
-    scan.print_errors();
+    scan0.print_errors();
+
+    Scanner scanner(argv[1]);
+    Parser parser(scanner);
+    parser.parse();
     return 0;
 }
 
