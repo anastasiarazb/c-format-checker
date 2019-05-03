@@ -1,13 +1,17 @@
 #include "parser.hpp"
 
 #define PROCESS_ERROR(a, b) process_error(a, b, __FILE__, __LINE__)
-#define LOG(...) std::cout <<  __VA_ARGS__ << std::endl;
+#define LOG(level, ...) \
+{ \
+    for (int i = 0; i < level; ++i) std::cout <<  '>';  \
+    std::cout << __VA_ARGS__ << std::endl; \
+}
 #define GREEN_TEXT(x) (std::string("@\033[1;32m") + std::string(x) + std::string("\033[0m@"))
 
 
-void Parser::parse_pragma()
+void Parser::parse_pragma(int level)
 {
-    LOG(std::string("Parse pragma, first = ") + std::string(token));
+    LOG(level, std::string("Parse pragma, first = ") + std::string(token));
     Coords fragment_start = token.start();
     while (token != lexem::Type::NEWLINE && token != lexem::END_OF_FILE) {
         nextToken(RETURN_NEWLINES);
@@ -23,14 +27,14 @@ void Parser::parse_pragma()
     while (token == lexem::NEWLINE) {
         nextToken();
     }
-    LOG(GREEN_TEXT(get_image(fragment_start, fragment_end)));
-    LOG(std::string("Parse pragma, last = ") + std::string(token) << "\n\n");
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string("Parse pragma, last = ") + std::string(token) << "\n\n");
 
 }
 
 void Parser::parse()
 {
-    LOG("Parse top level");
+    LOG(0, "Parse top level");
     nextToken();
     Coords fragment_start = token.start();
     while (token == lexem::NEWLINE) {
@@ -38,7 +42,7 @@ void Parser::parse()
     }
     while (token != lexem::END_OF_FILE) {
         if (token == lexem::HASH) {
-            parse_pragma();
+            parse_pragma(1);
         }
     }
     Coords fragment_end = token.follow();
