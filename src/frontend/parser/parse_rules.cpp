@@ -2,6 +2,7 @@
 
 #define PROCESS_ERROR(a, b) process_error(a, b, __FILE__, __LINE__)
 #define LOG(...) std::cout <<  __VA_ARGS__ << std::endl;
+#define GREEN_TEXT(x) (std::string("@\033[1;32m") + std::string(x) + std::string("\033[0m@"))
 
 
 void Parser::parse_pragma()
@@ -22,8 +23,9 @@ void Parser::parse_pragma()
     while (token == lexem::NEWLINE) {
         nextToken();
     }
-    LOG(get_image(fragment_start, fragment_end));
+    LOG(GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(std::string("Parse pragma, last = ") + std::string(token) << "\n\n");
+
 }
 
 void Parser::parse()
