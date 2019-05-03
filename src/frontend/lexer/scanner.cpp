@@ -70,9 +70,9 @@ void Scanner::skipComment(CommentStyle type) {
             nextChar(); // next
             return;
         case CommentStyle::ONE_LINE:
-            // One line comments can be propagated to the next line by "\", if it is the last non-whitespace symbol \
+        /*   // One line comments can be propagated to the next line by "\", if it is the last non-whitespace symbol \
                in the line \
-               and so on
+               and so on       (will be warned by IDE, but still legit)      */
             while (!reachedEOF() && cur_char != '\n') {
                 if (cur_char == '\\') {
                     nextChar();
