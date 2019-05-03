@@ -18,3 +18,8 @@ Coords::operator std::string() const {
 std::string Coords::coords_to_string(const Coords &start, const Coords &follow) {
     return std::string(start) + std::string("-") + std::string(follow);
 }
+
+int Coords::distance(Coords start, Coords follow)
+{
+    return follow.pos - start.pos;
+}

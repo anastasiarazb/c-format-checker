@@ -42,6 +42,7 @@ public:
     explicit Scanner(const char *path);
     Token nextToken();
     void  print_errors();
+    std::string_view substring(Coords start, Coords follow) const;
 };
 
 #endif // SCANNER_H

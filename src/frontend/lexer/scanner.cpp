@@ -432,3 +432,10 @@ void Scanner::print_errors() {
         std::cout << message << std::endl;
     }
 }
+
+std::string_view Scanner::substring(Coords start, Coords follow) const
+{
+    int len = Coords::distance(start, follow);
+    const char *from = program.c_str() + start.get_pos();
+    return std::string_view(from, len);
+}
