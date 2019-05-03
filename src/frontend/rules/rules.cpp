@@ -11,6 +11,7 @@ using json = nlohmann::json;
 const std::unordered_map<std::string, Rules::Cases> &Rules::str2case() {
     static const std::unordered_map<std::string, Rules::Cases> cases
         {
+            {"statement",        Rules::Cases::STATEMENT},
             {"struct",           Rules::Cases::STRUCT},
             {"enum",             Rules::Cases::ENUM},
             {"union",            Rules::Cases::UNION},
@@ -38,6 +39,7 @@ const std::unordered_map<std::string, Rules::Rule> &Rules::str2rule() {
 
 const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Rule>> &Rules::case2rule_default() {
     static const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Rule>> rules_default{
+        {Rules::Cases::STATEMENT,        {Rules::Rule::ANY}},
         {Rules::Cases::STRUCT,           {Rules::Rule::PLUS}},
         {Rules::Cases::ENUM,             {Rules::Rule::PLUS}},
         {Rules::Cases::UNION,            {Rules::Rule::PLUS}},
@@ -104,6 +106,7 @@ Rules::Rules(const char *path)
 std::string to_string(const Rules::Cases &obj)
 {
     static std::unordered_map<Rules::Cases, std::string> represents {
+        {Rules::Cases::STATEMENT,        "STATEMENT"},
         {Rules::Cases::STRUCT,           "STRUCT"},
         {Rules::Cases::ENUM,             "ENUM"},
         {Rules::Cases::UNION,            "UNION"},
