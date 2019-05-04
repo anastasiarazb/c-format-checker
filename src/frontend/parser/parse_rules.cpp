@@ -9,9 +9,26 @@
 #define GREEN_TEXT(x) (std::string("@\033[1;32m") + std::string(x) + std::string("\033[0m@"))
 
 
+void Parser::parse()
+{
+    LOG(0, "Parse top level");
+    nextToken();
+    Coords fragment_start = token.start();
+    while (token == lexem::NEWLINE) {
+        nextToken();
+    }
+    while (token != lexem::END_OF_FILE) {
+        if (token == lexem::HASH) {
+            parse_simple_expr(1);
+        }
+    }
+    Coords fragment_end = token.follow();
+//    LOG(get_image(fragment_start, fragment_end));
+}
+
 void Parser::parse_pragma(int level)
 {
-    LOG(level, std::string("Parse pragma, first = ") + std::string(token));
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
     while (token != lexem::Type::NEWLINE && token != lexem::END_OF_FILE) {
         nextToken(RETURN_NEWLINES);
@@ -28,23 +45,51 @@ void Parser::parse_pragma(int level)
         nextToken();
     }
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-    LOG(level, std::string("Parse pragma, last = ") + std::string(token) << "\n\n");
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 
 }
 
-void Parser::parse()
+void Parser::parse_simple_expr(int level)
 {
-    LOG(0, "Parse top level");
-    nextToken();
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-    while (token == lexem::NEWLINE) {
-        nextToken();
-    }
-    while (token != lexem::END_OF_FILE) {
+    while (token.in({
+        lexem::LBRACKET,  // [
+        lexem::RBRACKET,  // ]
+        lexem::LANGLE,    // <
+        lexem::RANGLE,    // >
+        lexem::COMMA,     // ,
+        lexem::DOLLAR,    // $
+        lexem::DOT,       // .
+        lexem::ELLIPSIS,  // ...
+        lexem::IDENT,     // [a-zA-Z][a-zA-Z0-9]*
+        lexem::STRING,    // ".*"
+        lexem::CHAR,      // '\n'
+        lexem::NUM,       // [0-9a-fA-FuUlLxX]+(\.
+        lexem::INC_DEC,   // ++, --
+        lexem::OPERATOR,  // +, -, /, %, ~, |, ^, <<, >>, !, &&, ||
+        lexem::ARROW,     // ->
+        lexem::STAR,      // *
+        lexem::ASSIGNOP,  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+        lexem::COMPAREOP, // >, <, !=, <=, =>, ==
+        lexem::AMPERSAND, // &
+
+        lexem::DOUBLEHASH,
+        lexem::HASH
+    }))
+    {
         if (token == lexem::HASH) {
-            parse_pragma(1);
+            parse_pragma(level+1);
+        } else {
+
+            nextToken();
+            // TODO: debug output + create last token storage + implemnt block
         }
     }
-    Coords fragment_end = token.follow();
-//    LOG(get_image(fragment_start, fragment_end));
+    if (token == lexem::SEMICOLON) {
+        nextToken();
+    }
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }

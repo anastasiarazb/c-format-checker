@@ -31,6 +31,9 @@ pragma = HASH line ( BACKSLASH NEWLINE? line )*
 line = <any_symbol except: BACKSLASH, NEWLINE>
 
 
+ПРАВОРЕКУРСИВНАЯ ГРАММАТИКА
+
+
 translation_unit
     : external_declaration, translation_unit_lr
     ;
@@ -110,4 +113,80 @@ expression_statement
     | expression, ';'
     ;
 
-simple_expression =
+simple_expression = words_seq
+
+
+
+ДО ДЕТЕРМИНИЗАЦИИ
+
+translation_unit = statement*
+
+statement = pragma
+          | function_definition
+          | simple_statement
+          | labeled_statement
+
+simple_statement = word_sequence (OPERATOR block)? SEMICOLON
+                 | block
+
+function_definition = word_sequence LPAREN word_sequence RPAREN block
+
+block = LBRACE statement* RBRACE
+
+labeled_statement = IDENT COLON statement
+                  | CASE word_sequence ':', statement
+                  | DEFAULT, ':', statement
+
+
+word =    LBRACKET  // [
+     |    RBRACKET  // ]
+     |    LANGLE    // <
+     |    RANGLE    // >
+     |    COMMA     // ,
+     |    DOLLAR    // $
+     |    DOT       // .
+     |    ELLIPSIS  // ...
+     |    IDENT     // [a-zA-Z][a-zA-Z0-9]*
+     |    STRING    // ".*"
+     |    CHAR      // '\n'
+     |    NUM       // [0-9a-fA-FuUlLxX]+(\.
+     |    INC_DEC   // ++, --
+     |    OPERATOR  // +, -, /, %, ~, |, ^, <<, >>, !, &&, ||
+     |    ARROW     // ->
+     |    STAR      // *
+     |    ASSIGNOP  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+     |    COMPAREOP // >, <, !=, <=, =>, ==
+     |    AMPERSAND // &
+     |    BACKSLASH // '\'
+     |    pragma
+     |    LPAREN statement RPAREN
+
+
+ПОСЛЕ ДЕТЕРМИНИЗАЦИИ
+
+translation_unit = statement*
+
+statement = pragma
+          | function_definition
+          | simple_statement
+          | selection_statement
+          | labeled_statement
+
+simple_statement = word_sequence (OPERATOR block)? SEMICOLON
+                 | block
+
+function_definition = word_sequence LPAREN word_sequence RPAREN block
+
+block = LBRACE statement* RBRACE
+
+labeled_statement = IDENT COLON statement
+                  | CASE word_sequence ':', statement
+                  | DEFAULT, ':', statement
+
+selection_statement
+    : IF, '(', expression, ')', statement, ELSE, statement
+    | IF, '(', expression, ')', statement
+    | SWITCH, '(', expression, ')', statement
+    ;
+
+word_sequence = word*
