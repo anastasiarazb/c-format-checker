@@ -1,5 +1,5 @@
 #define SOMETHING1 fdsahjklkjh,bnmnb \
-    sdfarwag \
+    sdfarwag \ adf
     gsdgdfssdfg
 
 #define SOMETHING2 jk;ljadf
@@ -15,3 +15,4 @@
 
 1234 , 1234 ,4 adsf;
 123 2345 gfds;
+//(lol)

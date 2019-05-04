@@ -66,6 +66,7 @@ int main(int argc, char* argv[])
     Scanner scanner(argv[1]);
     Parser parser(scanner);
     parser.parse();
+    std::cout << parser.get_errors_list() << std::endl;
     return 0;
 }
 

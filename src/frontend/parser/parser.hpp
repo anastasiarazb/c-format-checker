@@ -32,16 +32,12 @@ class Parser {
     Scanner &scanner;
     std::list<std::string> errors_list;
     const Token &process_error(lexem::Type expected, lexem::Type skip_until);
-    const Token &process_error(lexem::Type expected,
-                               const std::vector<lexem::Type> &skip_until);
-    const Token &process_error(lexem::Type expected, lexem::Type skip_until,
-                               char const *file, int line);
-    const Token &process_error(lexem::Type expected,
-                               const std::vector<lexem::Type> &skip_until,
-                               char const *file, int line);
     const Token &process_error(const std::vector<lexem::Type> &expected,
                                const std::vector<lexem::Type> &skip_until,
                                char const *file, int line);
+    const Token &checkToken(const std::vector<lexem::Type> &expected,
+                            const std::vector<lexem::Type> &skip_until,
+                            char const *file, int line);
 public:
     explicit Parser(Scanner &scan);
     std::string get_errors_list();
@@ -51,6 +47,7 @@ public:
     void parse();
     void parse_pragma(int level = 0);
     void parse_simple_expr(int level = 0);
+    void parse_block(int level = 0);
 };
 
 

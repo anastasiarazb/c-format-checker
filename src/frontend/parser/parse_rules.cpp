@@ -1,6 +1,6 @@
 #include "parser.hpp"
 
-#define PROCESS_ERROR(a, b) process_error(a, b, __FILE__, __LINE__)
+#define CHECK_TOKEN(a, b) checkToken(a, b, __FILE__, __LINE__)
 #define LOG(level, ...) \
 { \
     for (int i = 0; i < level; ++i) std::cout <<  '>';  \
@@ -18,9 +18,7 @@ void Parser::parse()
         nextToken();
     }
     while (token != lexem::END_OF_FILE) {
-        if (token == lexem::HASH) {
-            parse_simple_expr(1);
-        }
+        parse_simple_expr(1);
     }
     Coords fragment_end = token.follow();
 //    LOG(get_image(fragment_start, fragment_end));
@@ -34,9 +32,7 @@ void Parser::parse_pragma(int level)
         nextToken(RETURN_NEWLINES);
         if (token == lexem::Type::BACKSLASH) {
             nextToken(RETURN_NEWLINES);
-            if (token != lexem::Type::NEWLINE) {
-                PROCESS_ERROR(lexem::Type::NEWLINE, lexem::Type::NEWLINE);
-            }
+            CHECK_TOKEN({lexem::Type::NEWLINE}, {lexem::Type::NEWLINE});
             nextToken(RETURN_NEWLINES); // skip newline to allow multi-line defines
         }
     }
@@ -49,6 +45,11 @@ void Parser::parse_pragma(int level)
 
 }
 
+
+/*
+simple_statement = word_sequence (OPERATOR block)? SEMICOLON
+                 | block
+*/
 void Parser::parse_simple_expr(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
@@ -92,4 +93,10 @@ void Parser::parse_simple_expr(int level)
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+void Parser::parse_block(int level)
+{
+
+
 }
