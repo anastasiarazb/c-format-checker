@@ -5,3 +5,4 @@ cmake-build-debug
 misc.xml
 modules.xml
 vcs.xml
+CMakeLists.txt.*
