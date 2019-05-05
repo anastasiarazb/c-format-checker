@@ -47,9 +47,12 @@ public:
     std::string_view get_image(Coords start, Coords follow) const;
 
     void parse();
+    void parse_statement(int level = 0);
     void parse_pragma(int level = 0);
     void parse_simple_expr(int level = 0);
     void parse_block(int level = 0);
+    void parse_words_list(int level = 0);
+    void parse_initializer_list(int level = 0);
 };
 
 

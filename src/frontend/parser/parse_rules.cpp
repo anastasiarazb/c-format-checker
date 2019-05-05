@@ -1,6 +1,6 @@
 #include "parser.hpp"
 
-#define CHECK_TOKEN(a, b) checkToken(a, b, __FILE__, __LINE__)
+#define CHECK_TOKEN(...) checkToken(__VA_ARGS__, __FILE__, __LINE__)
 #define LOG(level, ...) \
 { \
     for (int i = 0; i < level; ++i) std::cout <<  '>';  \
@@ -54,6 +54,41 @@ void Parser::parse_simple_expr(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
+    if (token == lexem::LBRACE) {
+        parse_block(level+1);
+    } else {
+        parse_words_list(level+1);
+        CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
+        nextToken();
+    }
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+
+void Parser::parse_block(int level)
+{
+//    if (level > 5) exit(1);
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+    std::cout << "LEVEL =" << level << std::string(fragment_start) << std::endl;
+
+    CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
+    nextToken();
+    while (token.notEOF() && token != lexem::RBRACE) {
+        parse_simple_expr(level + 1);
+    }
+    CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
+    nextToken();
+
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+void Parser::parse_words_list(int level)
+{
     std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
         lexem::RBRACKET,  // ]
@@ -77,54 +112,39 @@ void Parser::parse_simple_expr(int level)
 
         lexem::DOUBLEHASH,
         lexem::HASH,
-        lexem::LBRACE
+        lexem::LBRACE,
+        lexem::LPAREN
     };
-    if (token == lexem::SEMICOLON) {  // empty statement
-        nextToken();
-        Coords fragment_end = token.start();
-        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
-        return;
-    }
-    CHECK_TOKEN(first, {lexem::SEMICOLON});
-    if (token == lexem::SEMICOLON || token.isEOF()) {  // broken statement
-        nextToken();
-        Coords fragment_end = token.start();
-        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
-        return;
-    }
-    while (token.in(first))
-    {
-        switch(token.type()){
+    while (token.in(first)) {
+        switch(token.type()) {
         case lexem::HASH:
             parse_pragma(level+1);
             continue;
         case lexem::LBRACE:
-            parse_block(level+1);
+            parse_initializer_list(level+1);
+            continue;
+        case lexem::LPAREN:
+            nextToken();
+            parse_words_list(level+1);
+            CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
+            nextToken();
             continue;
         default:
             nextToken();
         }
     }
-    if (token == lexem::SEMICOLON) {
-        nextToken();
-    }
-    Coords fragment_end = token.start();
-    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+
 }
 
-void Parser::parse_block(int level)
+void Parser::parse_initializer_list(int level)
 {
-//    if (level > 5) exit(1);
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
     nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
-        parse_simple_expr(level + 1);
+        parse_words_list(level + 1);
     }
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
