@@ -54,14 +54,6 @@ void Parser::parse_simple_expr(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-
-    if (token == lexem::SEMICOLON) {  // empty statement
-        nextToken();
-        Coords fragment_end = token.start();
-        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
-        return;
-    }
     std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
         lexem::RBRACKET,  // ]
@@ -87,14 +79,32 @@ void Parser::parse_simple_expr(int level)
         lexem::HASH,
         lexem::LBRACE
     };
+    if (token == lexem::SEMICOLON) {  // empty statement
+        nextToken();
+        Coords fragment_end = token.start();
+        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+        return;
+    }
+    CHECK_TOKEN(first, {lexem::SEMICOLON});
+    if (token == lexem::SEMICOLON || token.isEOF()) {  // broken statement
+        nextToken();
+        Coords fragment_end = token.start();
+        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+        return;
+    }
     while (token.in(first))
     {
-        if (token == lexem::HASH) {
+        switch(token.type()){
+        case lexem::HASH:
             parse_pragma(level+1);
-        } else {
-
+            continue;
+        case lexem::LBRACE:
+            parse_block(level+1);
+            continue;
+        default:
             nextToken();
-            // TODO: debug output + create last token storage + implemnt block
         }
     }
     if (token == lexem::SEMICOLON) {
@@ -107,9 +117,23 @@ void Parser::parse_simple_expr(int level)
 
 void Parser::parse_block(int level)
 {
+//    if (level > 5) exit(1);
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
+    nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
         parse_simple_expr(level + 1);
     }
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
+    nextToken();
+
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
+
+
+/// TODO: разделить сущности "блок" и "лист инициализации",
+/// блок = simple_statement, иниц_лист = word ВНУТРИ стейтмента
