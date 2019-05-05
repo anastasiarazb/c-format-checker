@@ -31,6 +31,8 @@ class Parser {
     const Token &nextToken(SkipNewlines skip_newlines=SKIP_NEWLINES);
     Scanner &scanner;
     std::list<std::string> errors_list;
+
+    void         write_message(const std::string &message, char const *file, int line);
     const Token &process_error(lexem::Type expected, lexem::Type skip_until);
     const Token &process_error(const std::vector<lexem::Type> &expected,
                                const std::vector<lexem::Type> &skip_until,

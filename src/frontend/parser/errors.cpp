@@ -30,29 +30,35 @@ const Token &Parser::process_error(lexem::Type expected, lexem::Type skip_until)
 
     errors_list.push_back(error_massage);
     while (token.type() != skip_until && token.type() != lexem::END_OF_FILE) {
-        nextToken();
+        nextToken(RETURN_NEWLINES);
     }
     return token;
+}
+
+void Parser::write_message(const std::string &message, char const *file, int line)
+{
+    std::stringstream ss;
+    ss << std::string("[") << file << ", line " << line << "] " << message << ".";
+    errors_list.push_back(ss.str());
 }
 
 const Token &Parser::process_error(const std::vector<lexem::Type> &expected,
                                    const std::vector<lexem::Type> &skip_until,
                                    char const *file, int line)
 {
-    std::stringstream ss;
-    ss << std::string("[") << file << ", line " << line << "] "
-       << "Error at " << token.coords_to_string() << " - token of type ";
+    std::stringstream message;
+    message << "Error at " << token.coords_to_string() << " - expected ";
     std::string delimiter("|");
     for (const lexem::Type &lexem: expected) {
-        ss << to_string(lexem) << delimiter;
+        message << to_string(lexem) << delimiter;
     }
-    ss.seekp(-1, std::ios_base::end);
-    ss << " expected, got " << to_string(token.type()) << ".";
+    message.seekp(-1, std::ios_base::end);
+    message << ", got " << to_string(token.type());
 
-    errors_list.push_back(ss.str());
+    write_message(message.str(), file, line);
 
     while (!token.in(skip_until) && token.type() != lexem::END_OF_FILE) {
-        nextToken();
+        nextToken(RETURN_NEWLINES);
     }
     return token;
 }

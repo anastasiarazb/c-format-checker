@@ -54,7 +54,15 @@ void Parser::parse_simple_expr(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-    while (token.in({
+
+    if (token == lexem::SEMICOLON) {  // empty statement
+        nextToken();
+        Coords fragment_end = token.start();
+        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+        LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+        return;
+    }
+    std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
         lexem::RBRACKET,  // ]
         lexem::LANGLE,    // <
@@ -76,8 +84,10 @@ void Parser::parse_simple_expr(int level)
         lexem::AMPERSAND, // &
 
         lexem::DOUBLEHASH,
-        lexem::HASH
-    }))
+        lexem::HASH,
+        lexem::LBRACE
+    };
+    while (token.in(first))
     {
         if (token == lexem::HASH) {
             parse_pragma(level+1);
@@ -97,6 +107,9 @@ void Parser::parse_simple_expr(int level)
 
 void Parser::parse_block(int level)
 {
-
-
+    CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
+    while (token.notEOF() && token != lexem::RBRACE) {
+        parse_simple_expr(level + 1);
+    }
+    CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
 }

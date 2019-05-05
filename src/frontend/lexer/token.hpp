@@ -84,6 +84,8 @@ public:
     inline bool in(const std::vector<lexem::Type> &set) const {
         return std::find(set.begin(), set.end(), m_type) != set.end();
     }
+    inline bool isEOF() const { return m_type == lexem::END_OF_FILE;}
+    inline bool notEOF() const { return m_type != lexem::END_OF_FILE;}
 //    bool in(std::initializer_list<lexem::Type> values);
     explicit operator std::string() const;
 };
