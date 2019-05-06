@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <typeinfo>
 #include <vector>
 #include <frontend/parser/parser.hpp>
@@ -34,14 +35,16 @@ json read_rules(std::string path)
         std::cout << "No such file " << path << std::endl;
         exit(2);
     }
-    std::string text;
-    file.seekg(0, std::ios::end);
-    text.reserve(file.tellg());
-    file.seekg(0, std::ios::beg);
-    text.assign((std::istreambuf_iterator<char>(file)),
-                   std::istreambuf_iterator<char>());
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+//    std::string text;
+//    file.seekg(0, std::ios::end);
+//    text.reserve(file.tellg());
+//    file.seekg(0, std::ios::beg);
+//    text.assign((std::istreambuf_iterator<char>(file)),
+//                   std::istreambuf_iterator<char>());
     file.close();
-    json j3 = json::parse(text);
+    json j3 = json::parse(buffer);
     return j3;
 }
 
