@@ -8,6 +8,7 @@
 #include "../include/nlohmann/json.hpp"
 #include "frontend/lexer/scanner.hpp"
 #include "frontend/rules/rules.hpp"
+#include "ast/interrepr.hpp"
 
 using json = nlohmann::json;
 
@@ -50,26 +51,27 @@ json read_rules(std::string path)
 
 int main(int argc, char* argv[])
 {
-//    json j = read_rules("../rules.json");
-//    std::vector<std::string> arr = j["case"];
-//    std::cout << arr.size() << j["case"] << (j["case"].type() == json::value_t::array) << std::endl;
-//    std::cout << (typeid(j["case"][0]).name() == typeid(char[]).name()) << std::endl;
+
     Rules r("../rules.json");
     std::cout << "Rules:\n" << r << std::endl;
     test_params(argc, argv);
     Scanner scan0 (argv[1]);
     Token token;
+    State st;
     std::cout << "Tokens:\n" << std::endl;
     do {
         token = scan0.nextToken();
-        std::cout << "  " << "TOKEN " << token << std::endl;
+        st.push_back(token);
+//        std::cout << "  " << "TOKEN " << token << std::endl;
     } while (token.type() != lexem::END_OF_FILE);
     scan0.print_errors();
+    st.set_rule(1, Rules::Cases::ENUM);
+    std::cout << std::string(st) << std::endl;
 
-    Scanner scanner(argv[1]);
-    Parser parser(scanner);
-    parser.parse();
-    std::cout << parser.get_errors_list() << std::endl;
+//    Scanner scanner(argv[1]);
+//    Parser parser(scanner);
+//    parser.parse();
+//    std::cout << parser.get_errors_list() << std::endl;
     return 0;
 }
 

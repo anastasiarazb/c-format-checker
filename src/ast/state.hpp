@@ -2,12 +2,16 @@
 #define STATE_H
 #include "frontend/lexer/token.hpp"
 #include "frontend/rules/rules.hpp"
+#include <string>
 
-class State: std::vector<Token>
+class State: public std::vector<Token>
 {
+    Rules::Cases rule = Rules::Cases::BLOCK;
+    int level = 0;
 public:
-    Rules::Cases rule;
     State();
+    void set_rule(int level, Rules::Cases rule);
+    operator std::string() const;
 };
 
 #endif // STATE_H
