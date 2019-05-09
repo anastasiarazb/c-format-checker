@@ -27,30 +27,30 @@ const std::unordered_map<std::string, Rules::Cases> &Rules::str2case() {
     return cases;
 }
 
-const std::unordered_map<std::string, Rules::Rule> &Rules::str2rule() {
-    static const std::unordered_map<std::string, Rules::Rule> rules {
-        {"+",     Rules::Rule::PLUS},
-        {"0",     Rules::Rule::ZERO},
-        {"start", Rules::Rule::START},
-        {"any",   Rules::Rule::ANY}
+const std::unordered_map<std::string, Rules::Indent> &Rules::str2rule() {
+    static const std::unordered_map<std::string, Rules::Indent> rules {
+        {"+",     Rules::Indent::PLUS},
+        {"0",     Rules::Indent::ZERO},
+        {"start", Rules::Indent::START},
+        {"any",   Rules::Indent::ANY}
     };
     return rules;
 }
 
-const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Rule>> &Rules::case2rule_default() {
-    static const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Rule>> rules_default{
-        {Rules::Cases::STATEMENT,        {Rules::Rule::ANY}},
-        {Rules::Cases::STRUCT,           {Rules::Rule::PLUS}},
-        {Rules::Cases::ENUM,             {Rules::Rule::PLUS}},
-        {Rules::Cases::UNION,            {Rules::Rule::PLUS}},
-        {Rules::Cases::FUNCTION,         {Rules::Rule::PLUS}},
-        {Rules::Cases::IF_ELSE_WHILE_DO, {Rules::Rule::PLUS}},
-        {Rules::Cases::LABEL,            {Rules::Rule::START, Rules::Rule::ZERO}},
-        {Rules::Cases::CASE,             {Rules::Rule::ZERO,  Rules::Rule::PLUS}},
-        {Rules::Cases::CASE_STATEMENT,   {Rules::Rule::PLUS}},
-        {Rules::Cases::BLOCK,            {Rules::Rule::PLUS}},
-        {Rules::Cases::PRAGMA,           {Rules::Rule::START}},
-        {Rules::Cases::CORTEGE,          {Rules::Rule::ANY}},
+const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Indent>> &Rules::case2rule_default() {
+    static const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Indent>> rules_default{
+        {Rules::Cases::STATEMENT,        {Rules::Indent::ANY}},
+        {Rules::Cases::STRUCT,           {Rules::Indent::PLUS}},
+        {Rules::Cases::ENUM,             {Rules::Indent::PLUS}},
+        {Rules::Cases::UNION,            {Rules::Indent::PLUS}},
+        {Rules::Cases::FUNCTION,         {Rules::Indent::PLUS}},
+        {Rules::Cases::IF_ELSE_WHILE_DO, {Rules::Indent::PLUS}},
+        {Rules::Cases::LABEL,            {Rules::Indent::START, Rules::Indent::ZERO}},
+        {Rules::Cases::CASE,             {Rules::Indent::ZERO,  Rules::Indent::PLUS}},
+        {Rules::Cases::CASE_STATEMENT,   {Rules::Indent::PLUS}},
+        {Rules::Cases::BLOCK,            {Rules::Indent::PLUS}},
+        {Rules::Cases::PRAGMA,           {Rules::Indent::START}},
+        {Rules::Cases::CORTEGE,          {Rules::Indent::ANY}},
     };
     return rules_default;
 }
@@ -73,8 +73,8 @@ json read_to_json(const char *path)
     return j;
 }
 
-std::unordered_set<Rules::Rule> from_vec(const std::vector<std::string> &values) {
-    std::unordered_set<Rules::Rule> res {};
+std::unordered_set<Rules::Indent> from_vec(const std::vector<std::string> &values) {
+    std::unordered_set<Rules::Indent> res {};
     for (const std::string &val: values) {
         res.insert(Rules::str2rule().at(val));
     }
@@ -122,11 +122,11 @@ std::string to_string(const Rules::Cases &obj)
     return represents.at(obj);
 }
 
-std::string to_string(const std::unordered_set<Rules::Rule> &obj)
+std::string to_string(const std::unordered_set<Rules::Indent> &obj)
 {
     std::stringstream res;
     res << "{";
-    for (const Rules::Rule &rule: obj) {
+    for (const Rules::Indent &rule: obj) {
         res << to_string(rule) << "|";
     }
 //    res.seekg(-1,std::ios::end);
@@ -135,13 +135,13 @@ std::string to_string(const std::unordered_set<Rules::Rule> &obj)
     return res.str();
 }
 
-std::string to_string(const Rules::Rule &obj)
+std::string to_string(const Rules::Indent &obj)
 {
-    static std::unordered_map<Rules::Rule, std::string> represents {
-        {Rules::Rule::PLUS, "PLUS"},
-        {Rules::Rule::ZERO, "ZERO"},
-        {Rules::Rule::START, "START"},
-        {Rules::Rule::ANY, "ANY"},
+    static std::unordered_map<Rules::Indent, std::string> represents {
+        {Rules::Indent::PLUS, "PLUS"},
+        {Rules::Indent::ZERO, "ZERO"},
+        {Rules::Indent::START, "START"},
+        {Rules::Indent::ANY, "ANY"},
 
     };
     return represents.at(obj);
@@ -151,7 +151,7 @@ std::ostream &operator<<(std::ostream &os, Rules::Cases val)
 {
     return os << to_string(val);
 }
-std::ostream &operator<<(std::ostream &os, Rules::Rule val)
+std::ostream &operator<<(std::ostream &os, Rules::Indent val)
 {
     return os << to_string(val);
 }
