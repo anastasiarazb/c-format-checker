@@ -64,7 +64,7 @@ json read_to_json(const char *path)
     }
     std::string text;
     file.seekg(0, std::ios::end);
-    text.reserve(file.tellg());
+    text.reserve(static_cast<unsigned int>(file.tellg()));
     file.seekg(0, std::ios::beg);
     text.assign((std::istreambuf_iterator<char>(file)),
                 std::istreambuf_iterator<char>());
@@ -130,7 +130,7 @@ std::string to_string(const std::unordered_set<Rules::Indent> &obj)
         res << to_string(rule) << "|";
     }
 //    res.seekg(-1,std::ios::end);
-    res.seekp((int)res.tellp()-1);
+    res.seekp(static_cast<unsigned int>(res.tellp())-1);
     res << "}";
     return res.str();
 }

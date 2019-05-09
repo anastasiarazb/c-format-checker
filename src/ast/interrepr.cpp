@@ -1,4 +1,4 @@
-#include "interrepr.h"
+#include "interrepr.hpp"
 
 InterRepr::InterRepr()
 {
