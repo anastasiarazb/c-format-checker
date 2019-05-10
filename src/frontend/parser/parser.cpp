@@ -1,27 +1,6 @@
 #include <sstream>
 #include "parser.hpp"
 
-Indent::Indent(Token newline_tok)
-{
-    update(newline_tok);
-}
-
-void Indent::update(Token newline_tok)
-{
-    tabs = spaces = 0;
-    for (auto it = newline_tok.image().end()-1; *it != '\n' && *it != '\r'; --it)
-    {
-        if (*it == ' ') {
-            ++spaces;
-        } else if (*it == '\t') {
-            ++tabs;
-        } else {
-            throw std::logic_error("got unexpected symbol <" + std::string(1, *it) \
-                                   + "> at " + __FILE__ + \
-                                   ", line " + std::to_string(__LINE__));
-        }
-    }
-}
 
 Parser::Parser(Scanner &scanner) :
     scanner(scanner)
@@ -55,16 +34,19 @@ const Token& Parser::nextToken(SkipNewlines skip_newlines)
     if (token == lexem::NEWLINE) {
         if (skip_newlines == RETURN_NEWLINES) {
             cur_indent.update(token);
+            lines.emplace_back(cur_indent);
             goto NEXT_TOKEN_RETURN;
         } else {
             while (token == lexem::NEWLINE) {
                 cur_indent.update(token);
                 token = scanner.nextToken();
             }
+            lines.emplace_back(cur_indent);
             goto NEXT_TOKEN_RETURN;
         }
     }
     NEXT_TOKEN_RETURN:
+    lines.back().push_back(token);
 //    std::cout << token << std::endl;
     return token;
 }
@@ -72,4 +54,13 @@ const Token& Parser::nextToken(SkipNewlines skip_newlines)
 std::string_view Parser::get_image(Coords start, Coords follow) const
 {
     return scanner.substring(start, follow);
+}
+
+std::string Parser::get_lines() const
+{
+    std::stringstream ss;
+    for (const Line &line: lines) {
+        ss << std::string(line) << "\n";
+    }
+    return ss.str();
 }

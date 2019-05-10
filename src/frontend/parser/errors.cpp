@@ -1,7 +1,7 @@
 #include <sstream>
 #include "parser.hpp"
 
-std::string Parser::get_errors_list()
+std::string Parser::get_errors_list() const
 {
     std::stringstream ss;
 //    scanner.print_errors();

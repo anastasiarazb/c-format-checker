@@ -9,6 +9,7 @@
 #include "frontend/lexer/scanner.hpp"
 #include "frontend/rules/rules.hpp"
 #include "ast/interrepr.hpp"
+#include "ast/line.hpp"
 
 using json = nlohmann::json;
 
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
     test_params(argc, argv);
     Scanner scan0 (argv[1]);
     Token token;
-    State st;
+    Line st(Indent(Token(lexem::Type::NEWLINE, "\n", Coords(), Coords())));
     std::cout << "Tokens:\n" << std::endl;
     do {
         token = scan0.nextToken();
@@ -65,13 +66,14 @@ int main(int argc, char* argv[])
 //        std::cout << "  " << "TOKEN " << token << std::endl;
     } while (token.type() != lexem::END_OF_FILE);
     scan0.print_errors();
-    st.set_rule(1, Rules::Cases::ENUM);
+//    st.set_rule(1, Rules::Cases::ENUM);
     std::cout << std::string(st) << std::endl;
 
-//    Scanner scanner(argv[1]);
-//    Parser parser(scanner);
-//    parser.parse();
-//    std::cout << parser.get_errors_list() << std::endl;
+    Scanner scanner(argv[1]);
+    Parser parser(scanner);
+    parser.parse();
+    std::cout << parser.get_lines() << std::endl;
+    std::cout << parser.get_errors_list() << std::endl;
     return 0;
 }
 
