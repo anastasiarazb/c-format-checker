@@ -8,7 +8,6 @@
 #include "../include/nlohmann/json.hpp"
 #include "frontend/lexer/scanner.hpp"
 #include "frontend/rules/rules.hpp"
-#include "ast/interrepr.hpp"
 #include "ast/line.hpp"
 
 using json = nlohmann::json;

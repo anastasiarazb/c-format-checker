@@ -2,7 +2,6 @@
 #define C_FORMAT_CHECKER_LINE_HPP
 
 #include "frontend/rules/rules.hpp"
-#include "state.hpp"
 #include "indent.hpp"
 #include <string>
 
