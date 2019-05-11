@@ -117,9 +117,9 @@ void Parser::parse_words_list(int level)
     };
     while (token.in(first)) {
         switch(token.type()) {
-        case lexem::HASH:
-            parse_pragma(level+1);
-            continue;
+//        case lexem::HASH:
+//            parse_pragma(level+1);
+//            continue;
         case lexem::LBRACE:
             parse_initializer_list(level+1);
             continue;

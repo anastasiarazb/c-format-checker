@@ -166,11 +166,11 @@ word =    LBRACKET  // [
 
 translation_unit = statement*
 
-statement = pragma
-          | function_definition
+statement = function_definition
           | simple_statement
           | selection_statement
           | labeled_statement
+          | iteration_statement
 
 simple_statement = word_sequence (OPERATOR block)? SEMICOLON
                  | block
@@ -190,3 +190,9 @@ selection_statement
     ;
 
 word_sequence = word*
+
+iteration_statement
+    : WHILE LPAREN word_sequence RPAREN statement
+    | DO statement WHILE LPAREN word_sequence RPAREN SEMICOLON
+    | FOR LPAREN word_sequence SEMICOLON word_sequence SEMICOLON word_sequence RPAREN statement
+    ;
