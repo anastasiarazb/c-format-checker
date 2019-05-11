@@ -39,3 +39,7 @@ Rules::Cases Line::popState()
     state.pop_back();
     return back;
 }
+
+Rules::Cases &Line::backState() {
+    return state.back();
+}

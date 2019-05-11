@@ -43,6 +43,7 @@ public:
     std::string get_lines() const;
     void readNewlines();
     std::string_view get_image(Coords start, Coords follow) const;
+    std::vector<Line> &get_token_table() {return lines;};
 
     void parse();
     void parse_statement(int level = 0);

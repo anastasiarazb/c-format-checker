@@ -8,6 +8,7 @@
 #include "../include/nlohmann/json.hpp"
 #include "frontend/lexer/scanner.hpp"
 #include "frontend/rules/rules.hpp"
+#include "ast/analyzer.hpp"
 #include "ast/line.hpp"
 
 using json = nlohmann::json;
@@ -29,7 +30,7 @@ void test_params(int argc, char* argv[]) {
 
 }
 
-json read_rules(std::string path)
+json read_rules(const std::string &path)
 {
     std::ifstream file (path, std::ios::in);
     if (!file) {
@@ -73,6 +74,8 @@ int main(int argc, char* argv[])
     parser.parse();
     std::cout << parser.get_lines() << std::endl;
     std::cout << parser.get_errors_list() << std::endl;
+
+    Analyzer a(parser.get_token_table(), r);
     return 0;
 }
 

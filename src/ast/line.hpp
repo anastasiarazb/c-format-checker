@@ -13,6 +13,7 @@ public:
     explicit Line(Indent indent);
     void addState(const std::vector<Rules::Cases> &rule_cases);
     Rules::Cases popState();
+    Rules::Cases &backState();
     void reset_indent(Indent new_indent);
     explicit operator std::string() const;
 };
