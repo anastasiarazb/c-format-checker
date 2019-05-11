@@ -161,6 +161,9 @@ Token Scanner::nextToken()
             if (cur_char == '/') {
                 skipComment(CommentStyle::ONE_LINE);  // '//'
                 return nextToken();
+            } else if (cur_char == '*') {
+                skipComment(CommentStyle::MULTI_LINE);  // '/*'
+                return nextToken();
             } else if (cur_char == '=') {
                 nextChar();
                 return tokenOfType(lexem::ASSIGNOP);  // '/='
