@@ -50,6 +50,13 @@ const Token& Parser::nextToken(SkipNewlines skip_newlines)
         }
         lines.emplace_back(cur_indent);
     }
+    switch (token.type()) {
+        case lexem::Type::BACKSLASH:
+            return nextToken();
+        case lexem::Type::HASH:
+            parse_pragma();
+            return nextToken();
+    }
     lines.back().push_back(token);
     return token;
 }

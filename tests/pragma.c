@@ -1,4 +1,4 @@
-  #define SOMETHING1 fdsahjklkjh,bnmnb \
+  #define SOMETHING1  \
   sdfarwag \ asdf
     ghjkjg \
      gsdgdfssdfg \
