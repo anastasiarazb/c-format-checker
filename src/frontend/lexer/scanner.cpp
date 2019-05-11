@@ -42,6 +42,36 @@ Scanner::Scanner(const char *path)
     keywords2type["while"] = lexem::WHILE;
 }
 
+Scanner::State Scanner::saveState()
+{
+    state = {start_ptr, cur_ptr, start_pos, cur_pos, cur_char, token_len, errors_list};
+    return state;
+}
+
+void  Scanner::restoreState()
+{
+    start_ptr = state.start_ptr;
+    cur_ptr   = state.cur_ptr;
+    start_pos = state.start_pos;
+    cur_pos   = state.cur_pos;
+    cur_char  = state.cur_char;
+    token_len = state.token_len;
+    errors_list = state.errors_list;
+}
+
+Scanner::State Scanner::restoreState(const State &backup)
+{
+    saveState();
+    start_ptr = backup.start_ptr;
+    cur_ptr   = backup.cur_ptr;
+    start_pos = backup.start_pos;
+    cur_pos   = backup.cur_pos;
+    cur_char  = backup.cur_char;
+    token_len = backup.token_len;
+    errors_list = backup.errors_list;
+    return state;
+}
+
 inline std::string_view Scanner::image() const
 {
     return std::string_view(start_ptr, token_len);

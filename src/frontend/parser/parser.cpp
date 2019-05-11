@@ -8,6 +8,34 @@ Parser::Parser(Scanner &scanner) :
     lines.emplace_back(Indent());
 }
 
+Parser::State Parser::saveState()
+{
+    state = {cur_indent, token, lines, scanner.saveState(), errors_list};
+    return state;
+}
+
+void Parser::restoreState()
+{
+    cur_indent = state.cur_indent;
+    token      = state.token;
+    lines      = state.lines;
+    scanner.restoreState(state.scanner_state);
+    errors_list = state.errors_list;
+}
+
+Parser::State Parser::restoreState(const Parser::State &backup)
+{
+    saveState();
+    cur_indent = backup.cur_indent;
+    token = backup.token;
+    lines = backup.lines;
+    scanner.restoreState(backup.scanner_state);
+    errors_list = backup.errors_list;
+    return state;
+}
+
+
+
 void Parser::readNewlines()
 {
     while (token == lexem::NEWLINE) {

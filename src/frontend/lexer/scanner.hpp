@@ -8,6 +8,17 @@
 #include <unordered_map>
 
 class Scanner {
+public:
+    struct State {
+        const char *start_ptr;
+        const char *cur_ptr;
+        Coords start_pos;
+        Coords cur_pos;
+        char  cur_char;
+        int   token_len;
+        std::list<std::string> errors_list;
+    };
+private:
     std::string program;
     std::unordered_map<std::string_view, lexem::Type> keywords2type;
     const char *start_ptr = nullptr;
@@ -16,6 +27,9 @@ class Scanner {
     Coords cur_pos;
     char  cur_char;
     int   token_len;
+
+    std::list<std::string> errors_list;
+    State state;
 
     std::string_view image() const;
     enum CommentStyle {
@@ -37,11 +51,13 @@ class Scanner {
     bool  reachedEOF();
     Token tokenOfType(lexem::Type type);
     void  add_error(const std::string &message);
-    std::list<std::string> errors_list;
 public:
     explicit Scanner(const char *path);
     Token nextToken();
     void  print_errors();
+    State saveState();
+    void  restoreState();
+    State restoreState(const State &backup);
     std::string_view substring(Coords start, Coords follow) const;
 };
 

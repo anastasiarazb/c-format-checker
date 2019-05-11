@@ -7,9 +7,16 @@
 #include <frontend/rules/rules.hpp>
 
 class Parser {
+    struct State {
+        Indent cur_indent;
+        Token token;
+        std::vector<Line> lines;
+
+        Scanner::State scanner_state;
+        std::list<std::string> errors_list;
+    } state;
     Indent cur_indent;
     Token token;
-    std::vector<int> last_line_words_positions;
     std::vector<Line> lines;
 
 
@@ -28,6 +35,9 @@ class Parser {
                             char const *file, int line);
 public:
     explicit Parser(Scanner &scan);
+    State saveState();
+    void restoreState();
+    State restoreState(const State &backup);
     std::string get_errors_list() const;
     std::string get_lines() const;
     void readNewlines();
@@ -38,7 +48,7 @@ public:
     void parse_pragma(int level = 0);
     void parse_simple_expr(int level = 0);
     void parse_block(int level = 0);
-    void parse_words_list(int level = 0);
+    void parse_word_sequence(int level = 0);
     void parse_initializer_list(int level = 0);
 };
 
