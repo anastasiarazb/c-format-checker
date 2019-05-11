@@ -23,3 +23,15 @@ Line::operator std::string() const
 void Line::reset_indent(Indent new_indent) {
     this->indent = new_indent;
 }
+
+void Line::addState(Rules rule)
+{
+    state.push_back(rule);
+}
+
+Rules Line::popRule()
+{
+    Rules back = state.back();
+    state.pop_back();
+    return back;
+}
