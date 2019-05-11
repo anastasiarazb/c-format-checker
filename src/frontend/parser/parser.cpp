@@ -32,6 +32,13 @@ const Token& Parser::nextTokenPragma()
 {
 
     token = scanner.nextToken();
+    if (token == lexem::Type::NEWLINE) {
+        cur_indent.update(token);
+        if (lines.back().empty()) {
+            lines.pop_back();
+        }
+        lines.emplace_back(cur_indent);
+    }
 //    std::cout << token << std::endl;
     return token;
 }
@@ -55,10 +62,11 @@ const Token& Parser::nextToken(SkipNewlines skip_newlines)
             return nextToken();
         case lexem::Type::HASH:
             parse_pragma();
-            return nextToken();
+            return token;
+        default:
+            lines.back().push_back(token);
+            return token;
     }
-    lines.back().push_back(token);
-    return token;
 }
 
 std::string_view Parser::get_image(Coords start, Coords follow) const

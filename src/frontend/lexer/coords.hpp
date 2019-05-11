@@ -5,7 +5,7 @@
 
 class Coords
 {
-    int pos = 0, line = 1, col = 1;
+    int pos = 0, line = 0, col = 1;
 public:
     Coords() = default;
     void shift(int ch);
