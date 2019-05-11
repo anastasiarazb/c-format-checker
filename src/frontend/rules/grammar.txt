@@ -162,17 +162,18 @@ word =    LBRACKET  // [
      |    LPAREN statement RPAREN
 
 
-ПОСЛЕ ДЕТЕРМИНИЗАЦИИ
+----------- Детерминизация, шаг 1 -----------
 
 translation_unit = statement*
 
 statement = function_definition
+          | struct_definition
           | simple_statement
           | selection_statement
           | labeled_statement
           | iteration_statement
 
-simple_statement = word_sequence (OPERATOR block)? SEMICOLON
+simple_statement = word_sequence SEMICOLON
                  | block
 
 function_definition = word_sequence LPAREN word_sequence RPAREN block
@@ -196,3 +197,35 @@ iteration_statement
     | DO statement WHILE LPAREN word_sequence RPAREN SEMICOLON
     | FOR LPAREN word_sequence SEMICOLON word_sequence SEMICOLON word_sequence RPAREN statement
     ;
+
+word =    LBRACKET  // [
+     |    RBRACKET  // ]
+     |    LANGLE    // <
+     |    RANGLE    // >
+     |    COMMA     // ,
+     |    DOLLAR    // $
+     |    DOT       // .
+     |    ELLIPSIS  // ...
+     |    IDENT     // [a-zA-Z][a-zA-Z0-9]*
+     |    STRING    // ".*"
+     |    CHAR      // '\n'
+     |    NUM       // [0-9a-fA-FuUlLxX]+(\.
+     |    INC_DEC   // ++, --
+     |    OPERATOR  // +, -, /, %, ~, |, ^, <<, >>, !, &&, ||
+     |    ARROW     // ->
+     |    STAR      // *
+     |    ASSIGNOP  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
+     |    COMPAREOP // >, <, !=, <=, =>, ==
+     |    AMPERSAND // &
+     |    BACKSLASH // '\'
+     |    initializer_list
+     |    LPAREN word_sequence RPAREN
+
+initializer_list = LBRACE word_sequence RBRACE
+----------- Детерминизация, шаг 2 -----------
+
+STRUCT/ENUM -> Struct_enum_decl /
+
+IDENT -> labeled_statement
+      |  simple_staatement
+      |  function_definition

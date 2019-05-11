@@ -47,7 +47,7 @@ void Parser::parse_pragma(int level)
 
 
 /*
-simple_statement = word_sequence (OPERATOR block)? SEMICOLON
+simple_statement = word_sequence SEMICOLON
                  | block
 */
 void Parser::parse_simple_expr(int level)
@@ -57,7 +57,7 @@ void Parser::parse_simple_expr(int level)
     if (token == lexem::LBRACE) {
         parse_block(level+1);
     } else {
-        parse_words_list(level+1);
+        parse_word_sequence(level + 1);
         CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
         nextToken();
     }
@@ -87,7 +87,7 @@ void Parser::parse_block(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-void Parser::parse_words_list(int level)
+void Parser::parse_word_sequence(int level)
 {
     std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
@@ -111,7 +111,6 @@ void Parser::parse_words_list(int level)
         lexem::AMPERSAND, // &
 
         lexem::DOUBLEHASH,
-        lexem::HASH,
         lexem::LBRACE,
         lexem::LPAREN
     };
@@ -125,7 +124,7 @@ void Parser::parse_words_list(int level)
             continue;
         case lexem::LPAREN:
             nextToken();
-            parse_words_list(level+1);
+                parse_word_sequence(level + 1);
             CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
             nextToken();
             continue;
@@ -144,7 +143,7 @@ void Parser::parse_initializer_list(int level)
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
     nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
-        parse_words_list(level + 1);
+        parse_word_sequence(level + 1);
     }
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
