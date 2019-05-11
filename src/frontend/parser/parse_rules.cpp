@@ -29,11 +29,11 @@ void Parser::parse_pragma(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
     while (token != lexem::Type::NEWLINE && token != lexem::END_OF_FILE) {
-        nextToken(RETURN_NEWLINES);
+        nextTokenPragma();
         if (token == lexem::Type::BACKSLASH) {
-            nextToken(RETURN_NEWLINES);
+            nextTokenPragma();
             CHECK_TOKEN({lexem::Type::NEWLINE}, {lexem::Type::NEWLINE});
-            nextToken(RETURN_NEWLINES); // skip newline to allow multi-line defines
+            nextTokenPragma(); // skip newline to allow multi-line defines
         }
     }
     Coords fragment_end = token.follow();

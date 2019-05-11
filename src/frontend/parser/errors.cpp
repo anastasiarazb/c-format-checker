@@ -58,7 +58,8 @@ const Token &Parser::process_error(const std::vector<lexem::Type> &expected,
     write_message(message.str(), file, line);
 
     while (!token.in(skip_until) && token.type() != lexem::END_OF_FILE) {
-        nextToken(RETURN_NEWLINES);
+//        nextToken(RETURN_NEWLINES);
+        nextTokenPragma();
     }
     return token;
 }

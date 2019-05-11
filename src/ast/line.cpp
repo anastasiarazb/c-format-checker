@@ -19,3 +19,7 @@ Line::operator std::string() const
     ss << "}";
     return ss.str();
 }
+
+void Line::reset_indent(Indent new_indent) {
+    this->indent = new_indent;
+}

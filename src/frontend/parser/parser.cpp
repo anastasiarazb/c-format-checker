@@ -5,7 +5,7 @@
 Parser::Parser(Scanner &scanner) :
     scanner(scanner)
 {
-
+    lines.emplace_back(Indent());
 }
 
 void Parser::readNewlines()
@@ -27,27 +27,30 @@ void Parser::readNewlines()
 //    return token;
 //}
 
+
+const Token& Parser::nextTokenPragma()
+{
+
+    token = scanner.nextToken();
+//    std::cout << token << std::endl;
+    return token;
+}
+
 const Token& Parser::nextToken(SkipNewlines skip_newlines)
 {
 
     token = scanner.nextToken();
-    if (token == lexem::NEWLINE) {
-        if (skip_newlines == RETURN_NEWLINES) {
+    if (token == lexem::Type::NEWLINE) {
+        while (token == lexem::Type::NEWLINE) {
             cur_indent.update(token);
-            lines.emplace_back(cur_indent);
-            goto NEXT_TOKEN_RETURN;
-        } else {
-            while (token == lexem::NEWLINE) {
-                cur_indent.update(token);
-                token = scanner.nextToken();
-            }
-            lines.emplace_back(cur_indent);
-            goto NEXT_TOKEN_RETURN;
+            token = scanner.nextToken();
         }
+        if (lines.back().empty()) {
+            lines.pop_back();
+        }
+        lines.emplace_back(cur_indent);
     }
-    NEXT_TOKEN_RETURN:
     lines.back().push_back(token);
-//    std::cout << token << std::endl;
     return token;
 }
 

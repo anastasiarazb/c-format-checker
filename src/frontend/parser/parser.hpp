@@ -16,7 +16,7 @@ class Parser {
     std::vector<Line> lines;
 
 
-    const Token &nextTokenWithNewlines();
+    const Token &nextTokenPragma();
     const Token &nextToken(SkipNewlines skip_newlines=SKIP_NEWLINES);
     Scanner &scanner;
     std::list<std::string> errors_list;

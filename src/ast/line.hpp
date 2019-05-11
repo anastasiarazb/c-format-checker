@@ -9,8 +9,9 @@
 class Line : public std::vector<Token> {
     Indent indent;
 public:
-    Line(Indent indent);
-    operator std::string() const;
+    explicit Line(Indent indent);
+    void reset_indent(Indent new_indent);
+    explicit operator std::string() const;
 };
 
 

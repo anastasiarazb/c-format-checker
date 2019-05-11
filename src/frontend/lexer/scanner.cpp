@@ -13,16 +13,16 @@ Scanner::Scanner(const char *path)
         printf("No such file %s\n", path);
         exit(2);
     }
-//    std::stringstream ss;
-//    ss << "\n" << file.rdbuf();
-//    program = ss.str();
-    file.seekg(0, std::ios::end);
-    program.reserve(static_cast<unsigned int>(file.tellg()) + 1);
-    file.seekg(0, std::ios::beg);
-    program.assign((std::istreambuf_iterator<char>(file)),
-                   std::istreambuf_iterator<char>());
+    std::stringstream ss;
+    ss << "\n" << file.rdbuf();
+    program = ss.str();
+//    file.seekg(0, std::ios::end);
+//    program.reserve(static_cast<unsigned int>(file.tellg()) + 1);
+//    file.seekg(0, std::ios::beg);
+//    program.assign((std::istreambuf_iterator<char>(file)),
+//                   std::istreambuf_iterator<char>());
     file.close();
-    program = "\n" + program;
+//    program = "\n" + program;
 
     start_ptr = program.c_str();
     cur_ptr = start_ptr;

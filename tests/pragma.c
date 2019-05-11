@@ -1,7 +1,10 @@
-#define SOMETHING1 fdsahjklkjh,bnmnb \
-    sdfarwag \ asdf
-    gsdgdfssdfg
+  #define SOMETHING1 fdsahjklkjh,bnmnb \
+  sdfarwag \ asdf
+    ghjkjg \
+     gsdgdfssdfg \
+      hklkhj \
 
+      1
 #define SOMETHING2 jk;ljadf
 
 #include <stdio.h>
