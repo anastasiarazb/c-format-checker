@@ -18,6 +18,7 @@ class Parser {
     Indent cur_indent;
     Token token;
     std::vector<Line> lines;
+    std::vector<Rules::Cases> rule_cases;
 
 
     const Token &nextTokenPragma();

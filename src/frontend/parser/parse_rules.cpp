@@ -57,8 +57,10 @@ void Parser::parse_simple_expr(int level)
     if (token == lexem::LBRACE) {
         parse_block(level+1);
     } else {
+        rule_cases.push_back(Rules::Cases::STATEMENT);
         parse_word_sequence(level + 1);
         CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
+        rule_cases.pop_back();
         nextToken();
     }
     Coords fragment_end = token.start();
@@ -72,13 +74,15 @@ void Parser::parse_block(int level)
 //    if (level > 5) exit(1);
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-    std::cout << "LEVEL =" << level << std::string(fragment_start) << std::endl;
+    std::cout << "LEVEL = " << level << std::string(fragment_start) << std::endl;
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
+    rule_cases.push_back(Rules::Cases::BLOCK);
     nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
         parse_simple_expr(level + 1);
     }
+    rule_cases.pop_back();
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
 

@@ -12,8 +12,8 @@ class Line : public std::vector<Token> {
     std::vector<Rules::Cases> state;
 public:
     explicit Line(Indent indent);
-    void addState(Rules::Cases rule);
-    Rules::Cases popRule();
+    void addState(const std::vector<Rules::Cases> &rule_cases);
+    Rules::Cases popState();
     void reset_indent(Indent new_indent);
     explicit operator std::string() const;
 };

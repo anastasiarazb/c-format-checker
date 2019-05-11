@@ -84,6 +84,7 @@ const Token& Parser::nextToken()
             lines.pop_back();
         }
         lines.emplace_back(cur_indent);
+        lines.back().addState(rule_cases);
     }
     switch (token.type()) {
         case lexem::Type::BACKSLASH:

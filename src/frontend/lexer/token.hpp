@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <frontend/rules/rules.hpp>
 
 namespace lexem {
 enum Type {
@@ -68,6 +69,8 @@ class Token {
     Coords m_start;
     Coords m_follow;
 public:
+    Rules::Cases rule = Rules::Cases::BLOCK;
+
     Token() = default;
     Token(lexem::Type type, std::string_view image, Coords start, Coords follow);
     Token(Token &&tok) noexcept;
