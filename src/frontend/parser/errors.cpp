@@ -30,7 +30,7 @@ const Token &Parser::process_error(lexem::Type expected, lexem::Type skip_until)
 
     errors_list.push_back(error_massage);
     while (token.type() != skip_until && token.type() != lexem::END_OF_FILE) {
-        nextToken(RETURN_NEWLINES);
+        nextTokenPragma();
     }
     return token;
 }

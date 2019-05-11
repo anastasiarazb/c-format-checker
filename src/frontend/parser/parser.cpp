@@ -43,7 +43,7 @@ const Token& Parser::nextTokenPragma()
     return token;
 }
 
-const Token& Parser::nextToken(SkipNewlines skip_newlines)
+const Token& Parser::nextToken()
 {
 
     token = scanner.nextToken();

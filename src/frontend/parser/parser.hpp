@@ -7,9 +7,6 @@
 #include <frontend/rules/rules.hpp>
 
 class Parser {
-    enum SkipNewlines {
-        SKIP_NEWLINES, RETURN_NEWLINES
-    };
     Indent cur_indent;
     Token token;
     std::vector<int> last_line_words_positions;
@@ -17,7 +14,7 @@ class Parser {
 
 
     const Token &nextTokenPragma();
-    const Token &nextToken(SkipNewlines skip_newlines=SKIP_NEWLINES);
+    const Token &nextToken();
     Scanner &scanner;
     std::list<std::string> errors_list;
 
