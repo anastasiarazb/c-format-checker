@@ -24,14 +24,14 @@ void Line::reset_indent(Indent new_indent) {
     this->indent = new_indent;
 }
 
-void Line::addState(Rules rule)
+void Line::addState(Rules::Cases rule)
 {
     state.push_back(rule);
 }
 
-Rules Line::popRule()
+Rules::Cases Line::popRule()
 {
-    Rules back = state.back();
+    Rules::Cases back = state.back();
     state.pop_back();
     return back;
 }

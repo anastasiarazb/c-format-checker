@@ -9,11 +9,11 @@
 
 class Line : public std::vector<Token> {
     Indent indent;
-    std::vector<Rules> state;
+    std::vector<Rules::Cases> state;
 public:
     explicit Line(Indent indent);
-    void addState(Rules rule);
-    Rules popRule();
+    void addState(Rules::Cases rule);
+    Rules::Cases popRule();
     void reset_indent(Indent new_indent);
     explicit operator std::string() const;
 };
