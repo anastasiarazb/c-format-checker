@@ -1,11 +1,14 @@
 #include "analyzer.hpp"
 #include <sstream>
 #include <iostream>
+#include <unordered_map>
 
 Analyzer::Analyzer(const std::vector<Line> &other, Rules rules) :
     std::vector<Line>(other), rules(std::move(rules))
 {
     first_pass();
+    collect_stats();
+    std::cout << str_stats() << std::endl;
 }
 
 Analyzer::operator std::string() const
@@ -35,7 +38,19 @@ void Analyzer::first_pass()
 
 void Analyzer::collect_stats()
 {
+//    std::vector<Line>::iterator it = begin();
     for (Line &line: *this) {
-
+        stats.emplace(line.states(), line.indent());
+        std::cout << line.front().image() << std::endl;
     }
+}
+
+std::string Analyzer::str_stats() const
+{
+    std::stringstream ss;
+    for (std::pair<StateVector, Indent> elem: stats) {
+        ss << std::string(elem.first)
+           << " " << std::string(elem.second) << "\n";
+    }
+    return ss.str();
 }

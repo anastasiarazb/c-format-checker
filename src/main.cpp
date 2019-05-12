@@ -3,13 +3,14 @@
 #include <sstream>
 #include <typeinfo>
 #include <vector>
-#include <frontend/parser/parser.hpp>
 
-#include "../include/nlohmann/json.hpp"
+#include "frontend/parser/parser.hpp"
 #include "frontend/lexer/scanner.hpp"
+#include "frontend/lexer/token.hpp"
 #include "frontend/rules/rules.hpp"
 #include "ast/analyzer.hpp"
 #include "ast/line.hpp"
+#include "../include/nlohmann/json.hpp"
 
 using json = nlohmann::json;
 
