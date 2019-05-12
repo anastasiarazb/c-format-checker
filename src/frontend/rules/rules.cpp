@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <vector>
 #include <sstream>
+#include <unordered_set>
 #include "rules.hpp"
 
 using json = nlohmann::json;
@@ -101,6 +102,11 @@ Rules::Rules(const char *path)
     }
 //    std::cout << std::to_string(case2rule[Cases::CASE]) << std::endl;
 
+}
+
+std::unordered_set<Rules::Indent> &Rules::operator[](Rules::Cases usage)
+{
+    return case2rule[usage];
 }
 
 std::string to_string(const Rules::Cases &obj)

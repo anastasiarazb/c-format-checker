@@ -19,6 +19,7 @@ public:
     static const std::unordered_map<Cases, std::unordered_set<Indent>> &case2rule_default();
     explicit Rules(const char *path);
     explicit operator std::string() const;
+    std::unordered_set<Indent> &operator[](Cases usage);
 
 private:
     std::unordered_map<Cases, std::unordered_set<Indent>> case2rule;
