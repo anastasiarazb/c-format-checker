@@ -64,6 +64,7 @@ std::string to_string(lexem::Type t);
 
 
 class Token {
+protected:
     lexem::Type m_type = lexem::Type::ERROR;
     std::string_view m_image;
     Coords m_start;
