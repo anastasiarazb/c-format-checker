@@ -3,7 +3,7 @@
 
 #include <frontend/lexer/token.hpp>
 
-class Indent {
+class Indent: public Token {
     int tabs = -1;
     int spaces = -1;
 public:
@@ -11,6 +11,7 @@ public:
 //    Indent(const Indent &) = default;
 //    Ident(Indent &&) = default;
     explicit Indent(Token newline_tok);
+    operator std::string() const;
     void update(Token newline_tok);
     bool mixed() const { return tabs > 0 && spaces > 0; }
     int  len(int tablen=4) const { return spaces + tabs * tablen; }
