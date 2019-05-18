@@ -13,14 +13,14 @@ void Indent::update(Token newline_tok)
     Token::m_follow = newline_tok.follow();
     Token::m_type = newline_tok.type();
 
-    tabs = spaces = 0;
+    m_tabs = m_spaces = 0;
     std::string_view image = newline_tok.image();
     for (auto it = image.end()-1; *it != '\n' && *it != '\r'; --it)
     {
         if (*it == ' ') {
-            ++spaces;
+            ++m_spaces;
         } else if (*it == '\t') {
-            ++tabs;
+            ++m_tabs;
         } else {
             throw std::logic_error("got unexpected symbol <" + std::string(1, *it) \
                                    + "> at " + __FILE__ + \

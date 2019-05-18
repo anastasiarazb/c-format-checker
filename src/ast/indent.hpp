@@ -4,18 +4,21 @@
 #include <frontend/lexer/token.hpp>
 
 class Indent: public Token {
-    int tabs = -1;
-    int spaces = -1;
+    int m_tabs = 0;
+    int m_spaces = 0;
 public:
     Indent() = default;
 //    Indent(const Indent &) = default;
 //    Ident(Indent &&) = default;
     explicit Indent(Token newline_tok);
-    operator std::string() const;
+    explicit operator std::string() const;
+    bool operator==(const Indent &other) const;
     void update(Token newline_tok);
-    bool mixed() const { return tabs > 0 && spaces > 0; }
-    int  len(int tablen=4) const { return spaces + tabs * tablen; }
-    bool initialized() const {return tabs < 0 || spaces < 0;}
+    bool mixed() const { return m_tabs > 0 && m_spaces > 0; }
+    int  len(int tablen=4) const { return m_spaces + m_tabs * tablen; }
+    int  tabs() const { return m_tabs; }
+    int  spaces() const { return m_spaces; }
+    bool initialized() const {return m_tabs < 0 || m_spaces < 0;}
 };
 
 
