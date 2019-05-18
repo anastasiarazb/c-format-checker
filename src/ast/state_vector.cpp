@@ -1,6 +1,7 @@
 #include "state_vector.hpp"
+#include "frontend/rules/rules.hpp"
+#include <algorithm>
 #include <sstream>
-#include <frontend/rules/rules.hpp>
 
 StateVector::operator std::string() const
 {
@@ -11,4 +12,9 @@ StateVector::operator std::string() const
     }
     ss << "]";
     return ss.str();
+}
+
+bool StateVector::contains(const Rules::Cases &val) const
+{
+    return std::find(begin(), end(), val) != end();
 }
