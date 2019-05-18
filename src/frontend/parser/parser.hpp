@@ -11,6 +11,7 @@ class Parser {
         Indent cur_indent;
         Token token;
         std::vector<Line> lines;
+        std::vector<Rules::Cases> rule_cases;
 
         Scanner::State scanner_state;
         std::list<std::string> errors_list;

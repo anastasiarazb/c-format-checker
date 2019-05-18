@@ -128,7 +128,7 @@ void Parser::parse_word_sequence(int level)
             continue;
         case lexem::LPAREN:
             nextToken();
-                parse_word_sequence(level + 1);
+            parse_word_sequence(level + 1);
             CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
             nextToken();
             continue;
