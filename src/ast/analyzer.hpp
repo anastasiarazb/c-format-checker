@@ -4,12 +4,18 @@
 #include "line.hpp"
 #include "state_vector.hpp"
 #include <vector>
+#include <list>
 #include <string>
 #include <map>
 
 class Analyzer: public std::vector<Line> {
     Rules rules;
-    std::multimap<StateVector, Indent> stats;
+    std::map<StateVector, std::vector<Indent>> stats;
+    std::list<std::string> error_list;
+    std::string wrap_error(const StateVector &state, const Indent &err_ind, const Indent &standard
+                            , const std::string &level="error", const std::string &assumption="") const;
+    std::string wrap_error(const StateVector &state, const Indent &err_ind
+                            , const std::string &level="error", const std::string &assumption="") const;
 public:
     std::string str_stats() const;
     explicit Analyzer(const std::vector<Line> &other, Rules rules);
@@ -17,6 +23,7 @@ public:
     void first_pass();
     void collect_stats();
     void analyze();
+    std::string error_messages() const;
 
 };
 
