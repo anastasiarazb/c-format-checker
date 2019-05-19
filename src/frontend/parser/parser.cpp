@@ -10,7 +10,7 @@ Parser::Parser(Scanner &scanner) :
 
 Parser::State Parser::saveState()
 {
-    state = {cur_indent, token, last_token, lines, rule_cases, scanner.saveState(), errors_list};
+    state = {cur_indent, token, last_token, lines, rule_cases, last_case, scanner.saveState(), errors_list};
     return state;
 }
 
@@ -21,6 +21,7 @@ void Parser::restoreState()
     last_token = state.last_token;
     lines      = state.lines;
     rule_cases = state.rule_cases;
+    last_case  = state.last_case;
     scanner.restoreState(state.scanner_state);
     errors_list = state.errors_list;
 }
@@ -33,6 +34,7 @@ Parser::State Parser::restoreState(const Parser::State &backup)
     last_token = backup.last_token;
     lines      = backup.lines;
     rule_cases = backup.rule_cases;
+    last_case  = backup.last_case;
     scanner.restoreState(backup.scanner_state);
     errors_list = backup.errors_list;
     return state;

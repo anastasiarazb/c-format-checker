@@ -13,6 +13,7 @@ class Parser {
         Token last_token;
         std::vector<Line> lines;
         std::vector<Rules::Cases> rule_cases;
+        Rules::Cases last_case;
 
         Scanner::State scanner_state;
         std::list<std::string> errors_list;
@@ -22,13 +23,15 @@ class Parser {
     Token last_token;
     std::vector<Line> lines;
     std::vector<Rules::Cases> rule_cases;
+    Rules::Cases last_case;
 
-
-    const Token &nextTokenPragma();
-    const Token &nextToken();
     Scanner &scanner;
     std::list<std::string> errors_list;
 
+    void         pushCase(Rules::Cases rule_case) {rule_cases.push_back(rule_case);}
+    Rules::Cases popCase() {last_case = rule_cases.back(); rule_cases.pop_back(); return last_case;}
+    const Token &nextTokenPragma();
+    const Token &nextToken();
     void         write_message(const std::string &message, char const *file, int line);
     const Token &process_error(lexem::Type expected, lexem::Type skip_until);
     const Token &process_error(const std::vector<lexem::Type> &expected,

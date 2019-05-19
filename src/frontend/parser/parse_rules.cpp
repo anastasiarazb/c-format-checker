@@ -48,6 +48,7 @@ void Parser::parse_pragma(int level)
 
 /*
 simple_statement = word_sequence SEMICOLON
+                 | word_sequence // if the last popped case was BLOCK, what means function definition
                  | block
 */
 void Parser::parse_simple_expr(int level)
@@ -57,10 +58,10 @@ void Parser::parse_simple_expr(int level)
     if (token == lexem::LBRACE) {
         parse_block(level+1);
     } else {
-        rule_cases.push_back(Rules::Cases::STATEMENT);
+        pushCase(Rules::Cases::STATEMENT);
         parse_word_sequence(level + 1);
-        CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
-        rule_cases.pop_back();
+        if (last_case != Rules::Cases::BLOCK) CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
+        popCase();
         nextToken();
     }
     Coords fragment_end = token.start();
@@ -77,12 +78,12 @@ void Parser::parse_block(int level)
     std::cout << "LEVEL = " << level << std::string(fragment_start) << std::endl;
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
-    rule_cases.push_back(Rules::Cases::BLOCK);
+    pushCase(Rules::Cases::BLOCK);
     nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
         parse_simple_expr(level + 1);
     }
-    rule_cases.pop_back();
+    popCase();
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
 
@@ -121,22 +122,27 @@ void Parser::parse_word_sequence(int level)
         lexem::LBRACE,
         lexem::LPAREN
     };
+    bool func_suspicious = false;  // check for pattern IDENT '(' word_sequence ')' '{'
     while (token.in(first)) {
         switch(token.type()) {
-//        case lexem::HASH:
-//            parse_pragma(level+1);
-//            continue;
         case lexem::LBRACE:
-            parse_initializer_list(level+1);
+            if (func_suspicious) { // function definition found => parse block
+                parse_block(level+1);
+            } else {
+                parse_initializer_list(level+1);
+            }
+            func_suspicious = false;
             continue;
         case lexem::LPAREN:
+            func_suspicious = (last_token == lexem::IDENT);
             nextToken();
-            parse_word_sequence(level + 1);
+            parse_word_sequence(level+1);
             CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
             nextToken();
             continue;
         default:
             nextToken();
+            func_suspicious = false;
         }
     }
 

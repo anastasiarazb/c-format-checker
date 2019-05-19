@@ -1,7 +1,12 @@
 #include <stdio.h>
 
-int main;
+int *main()
 {
+    {
+
+    }
+    int *x = (int[]){1,
+                     2, 3};
     long long n, x;
     scanf("%lld%lld", &n, &x);
     long long a;                 //Текущий коэффицент
@@ -22,7 +27,7 @@ int main;
         diff = diff*x+a*(n-i);
     }
     printf("\n%lld %lld\n", result, diff);
-    return 0;
+    return {1, 2, 3};
 }
 
 // valgrind ~/Qt/1module/1-polynomial-Debug/1-polynomial
