@@ -48,7 +48,8 @@ void Parser::parse_pragma(int level)
 
 /*
 statement = block
-           | simple_expr
+          | simple_expr
+          | iteration_statement
 */
 void Parser::parse_statement(int level)
 {
@@ -71,7 +72,11 @@ void Parser::parse_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-
+/*
+iteration_statement = FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
+                    | WHILE '(' word_sequence ')' statement
+                    | DO statement WHILE '(' word_sequence ')' ';'
+ */
 void Parser::parse_iteration_statement(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
@@ -79,7 +84,7 @@ void Parser::parse_iteration_statement(int level)
 
 
 
-    if (token == lexem::FOR) {  // FOR '(' parse_word_sequence ';' parse_word_sequence ';' parse_word_sequence ')' statement
+    if (token == lexem::FOR) {  // FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
         pushCase(Rules::Cases::STATEMENT);
         nextToken();
         CHECK_TOKEN({ lexem::LPAREN }, { lexem::LPAREN });
@@ -98,7 +103,7 @@ void Parser::parse_iteration_statement(int level)
         nextToken();
 
         parse_statement(level + 1);
-    } else if (token == lexem::WHILE) {  // WHILE '(' parse_word_sequence ')' statement
+    } else if (token == lexem::WHILE) {  // WHILE '(' word_sequence ')' statement
         pushCase(Rules::Cases::STATEMENT);
         nextToken();
         CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
@@ -111,7 +116,7 @@ void Parser::parse_iteration_statement(int level)
         nextToken();
 
         parse_statement(level + 1);
-    } else if (token == lexem::DO) {  // DO statement WHILE '(' parse_word_sequence ')' ';'
+    } else if (token == lexem::DO) {  // DO statement WHILE '(' word_sequence ')' ';'
         nextToken();
 
         parse_statement(level + 1);
@@ -137,6 +142,8 @@ void Parser::parse_iteration_statement(int level)
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
+
+void selection_statement(int level = 0);
 
 
 /*
@@ -165,7 +172,9 @@ void Parser::parse_simple_expr(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-
+/*
+block = '{' parse_statement* '}'
+ */
 void Parser::parse_block(int level)
 {
 //    if (level > 5) exit(1);
@@ -188,6 +197,11 @@ void Parser::parse_block(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
+
+/*
+word = first \ {LBRACE, LPAREN}
+word_sequence = (word | '(' word_sequence ')' | initializer_list)* (IDENT '(' word_sequence ')' block) ?
+ */
 void Parser::parse_word_sequence(int level)
 {
     static const std::vector<lexem::Type> first = {
@@ -221,11 +235,14 @@ void Parser::parse_word_sequence(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
     bool func_suspicious = false;  // check for pattern IDENT '(' word_sequence ')' '{'
-    while (token.in(first)) {
+    bool parsed_function = false;
+    while (token.in(first) && !parsed_function) {
         switch(token.type()) {
         case lexem::LBRACE:
             if (func_suspicious) { // function definition found => parse block
                 parse_block(level+1);
+                parsed_function = true;
+                break;
             } else {
                 parse_initializer_list(level+1);
             }
@@ -248,6 +265,10 @@ void Parser::parse_word_sequence(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
+/*
+parse_initializer_list = '{' parse_word_sequence '}'
+*/
+
 void Parser::parse_initializer_list(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
@@ -255,9 +276,9 @@ void Parser::parse_initializer_list(int level)
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
     nextToken();
-    while (token.notEOF() && token != lexem::RBRACE) {
-        parse_word_sequence(level + 1);
-    }
+
+    parse_word_sequence(level + 1);
+
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
 

@@ -28,7 +28,7 @@ int *main()
         diff = diff*x+a*(n-i);
     }
         printf("\n%lld %lld\n", result, diff);
-        return {1, 2, 3};
+        return {1, 2, {1, 2, 3, {}}};
     }
     do {
         0;
@@ -37,5 +37,9 @@ int *main()
     while(1) ;
     for(;;);
     for(;;) {}
+}
+
+void hello(int i) {
+    printf("hello\n");
 }
 // valgrind ~/Qt/1module/1-polynomial-Debug/1-polynomial
