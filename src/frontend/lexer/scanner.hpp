@@ -49,6 +49,8 @@ private:
     void  clearCounters();
     void  rollbackCounters();
     bool  reachedEOF();
+    bool  isKeyword(std::string_view word) const;
+    bool  isType(std::string_view word) const;
     Token tokenOfType(lexem::Type type);
     void  add_error(const std::string &message);
 public:

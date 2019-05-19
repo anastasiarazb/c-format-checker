@@ -52,7 +52,6 @@ enum Type {
     WHILE,
     TYPEDEF,
     TYPENAME,
-    QUALIFIER,
 
     KEYWORD,
 

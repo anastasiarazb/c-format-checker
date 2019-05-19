@@ -113,6 +113,9 @@ void Parser::parse_word_sequence(int level)
         lexem::ASSIGNOP,  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
         lexem::COMPAREOP, // >, <, !=, <=, =>, ==
         lexem::AMPERSAND, // &
+        lexem::TYPENAME,
+        lexem::TYPEDEF,
+        lexem::KEYWORD,
 
         lexem::DOUBLEHASH,
         lexem::LBRACE,

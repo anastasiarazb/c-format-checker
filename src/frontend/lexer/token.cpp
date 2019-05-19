@@ -49,7 +49,6 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(WHILE);
         RETURN_NAME(TYPEDEF);
         RETURN_NAME(TYPENAME);
-        RETURN_NAME(QUALIFIER);
         RETURN_NAME(KEYWORD);
         RETURN_NAME(NEWLINE);
         RETURN_NAME(END_OF_FILE);

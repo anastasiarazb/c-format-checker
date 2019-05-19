@@ -5,6 +5,7 @@
 #include <iostream>     // std::cout
 #include <fstream>      // std::ifstream
 #include <sstream>
+#include <algorithm>
 
 Scanner::Scanner(const char *path)
 {
@@ -40,7 +41,27 @@ Scanner::Scanner(const char *path)
     keywords2type["struct"] = lexem::STRUCT;
     keywords2type["switch"] = lexem::SWITCH;
     keywords2type["while"] = lexem::WHILE;
+    keywords2type["typedef"] = lexem::TYPEDEF;
 }
+
+bool Scanner::isKeyword(std::string_view word) const
+{
+    static const std::vector<std::string> keywords = {
+        "auto", "break", "continue", "extern", "goto", "register", "return", "sizeof"
+    };
+    std::find(keywords.begin(), keywords.end(), word) != keywords.end();
+}
+
+bool Scanner::isType(std::string_view word) const
+{
+    static const std::vector<std::string> types = {
+        "char", "const", "double", "float", "int", "short",  "signed", "static",
+        "unsigned", "void", "volatile"
+    };
+    return std::find(types.begin(), types.end(), word) != types.end();
+}
+
+
 
 Scanner::State Scanner::saveState()
 {
@@ -383,9 +404,16 @@ Token Scanner::scanIdent() {
     while (isalpha(cur_char) || isdigit(cur_char) || cur_char == '_') {
         nextChar();
     }
-    auto search = keywords2type.find(image());
+    std::string_view word = image();
+    auto search = keywords2type.find(word);
     if (search != keywords2type.end()) {
         return tokenOfType((*search).second);
+    }
+    if (isKeyword(word)) {
+        return tokenOfType(lexem::KEYWORD);
+    }
+    if (isType(word)) {
+        return tokenOfType(lexem::TYPENAME);
     }
     return tokenOfType(lexem::IDENT);
 }
