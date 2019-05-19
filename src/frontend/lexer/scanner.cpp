@@ -49,13 +49,13 @@ bool Scanner::isKeyword(std::string_view word) const
     static const std::vector<std::string> keywords = {
         "auto", "break", "continue", "extern", "goto", "register", "return", "sizeof"
     };
-    std::find(keywords.begin(), keywords.end(), word) != keywords.end();
+    return std::find(keywords.begin(), keywords.end(), word) != keywords.end();
 }
 
 bool Scanner::isType(std::string_view word) const
 {
     static const std::vector<std::string> types = {
-        "char", "const", "double", "float", "int", "short",  "signed", "static",
+        "char", "const", "double", "float", "int", "long", "short",  "signed", "static",
         "unsigned", "void", "volatile"
     };
     return std::find(types.begin(), types.end(), word) != types.end();
