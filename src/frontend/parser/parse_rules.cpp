@@ -77,9 +77,10 @@ void Parser::parse_iteration_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
 
-    pushCase(Rules::Cases::STATEMENT);
 
-    if (token == lexem::FOR) {
+
+    if (token == lexem::FOR) {  // FOR '(' parse_word_sequence ';' parse_word_sequence ';' parse_word_sequence ')' statement
+        pushCase(Rules::Cases::STATEMENT);
         nextToken();
         CHECK_TOKEN({ lexem::LPAREN }, { lexem::LPAREN });
         nextToken();
@@ -93,10 +94,30 @@ void Parser::parse_iteration_statement(int level)
         parse_word_sequence(level + 1);
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        popCase();
         nextToken();
 
         parse_statement(level + 1);
-    } else if (token == lexem::WHILE) {
+    } else if (token == lexem::WHILE) {  // WHILE '(' parse_word_sequence ')' statement
+        pushCase(Rules::Cases::STATEMENT);
+        nextToken();
+        CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
+        nextToken();
+
+        parse_word_sequence(level + 1);
+
+        CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        popCase();
+        nextToken();
+
+        parse_statement(level + 1);
+    } else if (token == lexem::DO) {  // DO statement WHILE '(' parse_word_sequence ')' ';'
+        nextToken();
+
+        parse_statement(level + 1);
+
+        CHECK_TOKEN({ lexem::WHILE }, { lexem::WHILE });
+        pushCase(Rules::Cases::STATEMENT);
         nextToken();
         CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
         nextToken();
@@ -105,11 +126,13 @@ void Parser::parse_iteration_statement(int level)
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         nextToken();
+        CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON });
+        popCase();
+        nextToken();
 
-        parse_statement(level + 1);
     }
 
-    popCase();
+
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
@@ -134,7 +157,7 @@ void Parser::parse_simple_expr(int level)
     } else {
         popCase();
     }
-    std::cout << token << " "  << std::endl;
+//    std::cout << token << " "  << std::endl;
 
 
     Coords fragment_end = token.start();

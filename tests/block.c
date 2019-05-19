@@ -30,5 +30,12 @@ int *main()
         printf("\n%lld %lld\n", result, diff);
         return {1, 2, 3};
     }
+    do {
+        0;
+    } while(0);
+    while(1) {}
+    while(1) ;
+    for(;;);
+    for(;;) {}
 }
 // valgrind ~/Qt/1module/1-polynomial-Debug/1-polynomial
