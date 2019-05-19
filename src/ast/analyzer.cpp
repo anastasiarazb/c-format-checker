@@ -29,7 +29,7 @@ void Analyzer::first_pass()
             Rules::Cases state = line.popState();
             if (state != Rules::Cases::BLOCK) {
                 throw std::logic_error("Expected Rules::Cases::BLOCK, got " + to_string(state) \
-                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__));
+                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__) + ": " + std::string(line));
             }
         }
     }

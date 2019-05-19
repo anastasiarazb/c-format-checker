@@ -52,8 +52,9 @@ public:
     std::vector<Line> &get_token_table() {return lines;};
 
     void parse();
-    void parse_statement(int level = 0);
     void parse_pragma(int level = 0);
+    void parse_statement(int level = 0);
+    void parse_iteration_statement(int level = 0);
     void parse_simple_expr(int level = 0);
     void parse_block(int level = 0);
     void parse_word_sequence(int level = 0);

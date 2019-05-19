@@ -1,3 +1,4 @@
+#include <ast/analyzer.hpp>
 #include "parser.hpp"
 
 #define CHECK_TOKEN(...) checkToken(__VA_ARGS__, __FILE__, __LINE__)
@@ -6,7 +7,7 @@
     for (int i = 0; i < level; ++i) std::cout <<  '>';  \
     std::cout << __VA_ARGS__ << std::endl; \
 }
-#define GREEN_TEXT(x) (std::string("@\033[1;32m") + std::string(x) + std::string("\033[0m@"))
+#define GREEN_TEXT(x) (x.empty() ? std::string("@@") : std::string("@\033[1;32m") + std::string(x) + "\033[0m@")
 
 
 void Parser::parse()
@@ -57,9 +58,58 @@ void Parser::parse_statement(int level)
         case lexem::LBRACE:
             parse_block(level+1);
             break;
+        case lexem::FOR:
+        case lexem::WHILE:
+        case lexem::DO:
+            parse_iteration_statement(level+1);
+            break;
         default:
             parse_simple_expr(level+1);
     }
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+
+void Parser::parse_iteration_statement(int level)
+{
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+
+    pushCase(Rules::Cases::STATEMENT);
+
+    if (token == lexem::FOR) {
+        nextToken();
+        CHECK_TOKEN({ lexem::LPAREN }, { lexem::LPAREN });
+        nextToken();
+
+        parse_word_sequence(level + 1);
+        CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON });
+        nextToken();
+        parse_word_sequence(level + 1);
+        CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON });
+        nextToken();
+        parse_word_sequence(level + 1);
+
+        CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        nextToken();
+
+        parse_statement(level + 1);
+    } else if (token == lexem::WHILE) {
+        nextToken();
+        CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
+        nextToken();
+
+        parse_word_sequence(level + 1);
+
+        CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        nextToken();
+
+        parse_statement(level + 1);
+    }
+
+    popCase();
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
@@ -77,9 +127,15 @@ void Parser::parse_simple_expr(int level)
 
     pushCase(Rules::Cases::STATEMENT);
     parse_word_sequence(level + 1);
-    if (last_case != Rules::Cases::BLOCK) CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
-    popCase();
-    nextToken();
+    if (last_case != Rules::Cases::BLOCK) {
+        CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON, lexem::RBRACE });
+        popCase();
+        nextToken();
+    } else {
+        popCase();
+    }
+    std::cout << token << " "  << std::endl;
+
 
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
@@ -139,6 +195,8 @@ void Parser::parse_word_sequence(int level)
         lexem::LBRACE,
         lexem::LPAREN
     };
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
     bool func_suspicious = false;  // check for pattern IDENT '(' word_sequence ')' '{'
     while (token.in(first)) {
         switch(token.type()) {
@@ -162,7 +220,9 @@ void Parser::parse_word_sequence(int level)
             func_suspicious = false;
         }
     }
-
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
 void Parser::parse_initializer_list(int level)
