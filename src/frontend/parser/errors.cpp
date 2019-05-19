@@ -40,6 +40,8 @@ void Parser::write_message(const std::string &message, char const *file, int lin
     std::stringstream ss;
     ss << std::string("[") << file << ", line " << line << "] " << message << ".";
     errors_list.push_back(ss.str());
+
+    std::cout << ss.str() << std::endl;
 }
 
 const Token &Parser::process_error(const std::vector<lexem::Type> &expected,
