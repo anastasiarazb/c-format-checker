@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int *main()
-{
+{{
     {
 
     }
@@ -29,5 +29,5 @@ int *main()
     printf("\n%lld %lld\n", result, diff);
     return {1, 2, 3};
 }
-
+}
 // valgrind ~/Qt/1module/1-polynomial-Debug/1-polynomial

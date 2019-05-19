@@ -14,12 +14,11 @@ void Parser::parse()
     LOG(0, "Parse top level");
     nextToken();
     Coords fragment_start = token.start();
-    while (token == lexem::NEWLINE) {
-        nextToken();
-    }
+
     while (token != lexem::END_OF_FILE) {
-        parse_simple_expr(1);
+        parse_statement(1);
     }
+
     Coords fragment_end = token.follow();
 //    LOG(get_image(fragment_start, fragment_end));
 }
@@ -47,23 +46,41 @@ void Parser::parse_pragma(int level)
 
 
 /*
+statement = block
+           | simple_expr
+*/
+void Parser::parse_statement(int level)
+{
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+    switch (token.type()) {
+        case lexem::LBRACE:
+            parse_block(level+1);
+            break;
+        default:
+            parse_simple_expr(level+1);
+    }
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+
+/*
 simple_statement = word_sequence SEMICOLON
                  | word_sequence // if the last popped case was BLOCK, what means function definition
-                 | block
 */
 void Parser::parse_simple_expr(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-    if (token == lexem::LBRACE) {
-        parse_block(level+1);
-    } else {
-        pushCase(Rules::Cases::STATEMENT);
-        parse_word_sequence(level + 1);
-        if (last_case != Rules::Cases::BLOCK) CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
-        popCase();
-        nextToken();
-    }
+
+    pushCase(Rules::Cases::STATEMENT);
+    parse_word_sequence(level + 1);
+    if (last_case != Rules::Cases::BLOCK) CHECK_TOKEN({lexem::SEMICOLON}, {lexem::SEMICOLON, lexem::RBRACE});
+    popCase();
+    nextToken();
+
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
@@ -81,7 +98,7 @@ void Parser::parse_block(int level)
     pushCase(Rules::Cases::BLOCK);
     nextToken();
     while (token.notEOF() && token != lexem::RBRACE) {
-        parse_simple_expr(level + 1);
+        parse_statement(level + 1);
     }
     popCase();
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
@@ -165,7 +182,3 @@ void Parser::parse_initializer_list(int level)
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
-
-
-/// TODO: разделить сущности "блок" и "лист инициализации",
-/// блок = simple_statement, иниц_лист = word ВНУТРИ стейтмента
