@@ -94,7 +94,7 @@ void Parser::parse_block(int level)
 
 void Parser::parse_word_sequence(int level)
 {
-    std::vector<lexem::Type> first = {
+    static const std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
         lexem::RBRACKET,  // ]
         lexem::LANGLE,    // <
