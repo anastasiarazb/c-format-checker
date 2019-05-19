@@ -74,7 +74,7 @@ void Analyzer::analyze()
                                                     "Использование табуляций (ранее использовались пробелы)."));
                     std::cout << error_list.back() << std::endl;
                 }
-            } else if (!state.contains(Rules::Cases::STATEMENT)){
+            } else if (rules[state.back()].count(Rules::Indent::ANY) == 0){
                 error_list.push_back(wrap_error(state, ind, standard, "ошибка"));
                 std::cout << error_list.back() << std::endl;
             }
