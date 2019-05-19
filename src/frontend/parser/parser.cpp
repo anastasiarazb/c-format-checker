@@ -10,7 +10,7 @@ Parser::Parser(Scanner &scanner) :
 
 Parser::State Parser::saveState()
 {
-    state = {cur_indent, token, lines, rule_cases, scanner.saveState(), errors_list};
+    state = {cur_indent, token, last_token, lines, rule_cases, scanner.saveState(), errors_list};
     return state;
 }
 
@@ -18,6 +18,7 @@ void Parser::restoreState()
 {
     cur_indent = state.cur_indent;
     token      = state.token;
+    last_token = state.last_token;
     lines      = state.lines;
     rule_cases = state.rule_cases;
     scanner.restoreState(state.scanner_state);
@@ -28,8 +29,9 @@ Parser::State Parser::restoreState(const Parser::State &backup)
 {
     saveState();
     cur_indent = backup.cur_indent;
-    token = backup.token;
-    lines = backup.lines;
+    token      = backup.token;
+    last_token = backup.last_token;
+    lines      = backup.lines;
     rule_cases = backup.rule_cases;
     scanner.restoreState(backup.scanner_state);
     errors_list = backup.errors_list;
@@ -60,7 +62,7 @@ void Parser::readNewlines()
 
 const Token& Parser::nextTokenPragma()
 {
-
+    last_token = token;
     token = scanner.nextToken();
     if (token == lexem::Type::NEWLINE) {
         cur_indent.update(token);
@@ -75,7 +77,7 @@ const Token& Parser::nextTokenPragma()
 
 const Token& Parser::nextToken()
 {
-
+    last_token = token;
     token = scanner.nextToken();
     if (token == lexem::Type::NEWLINE) {
         while (token == lexem::Type::NEWLINE) {

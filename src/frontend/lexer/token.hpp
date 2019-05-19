@@ -50,6 +50,11 @@ enum Type {
     STRUCT,
     SWITCH,
     WHILE,
+    TYPEDEF,
+    TYPENAME,
+    QUALIFIER,
+
+    KEYWORD,
 
 
 //    WHITESPACE, // [' ''\t']+
@@ -77,6 +82,7 @@ public:
     Token(Token &&tok) noexcept;
     Token(const Token &tok) = default;
     Token& operator=(const Token&) = default;
+
     inline bool operator==(lexem::Type type) const { return m_type == type; }
     inline bool operator!=(lexem::Type type) const { return m_type != type; }
     lexem::Type       type()   const;

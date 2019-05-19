@@ -10,6 +10,7 @@ class Parser {
     struct State {
         Indent cur_indent;
         Token token;
+        Token last_token;
         std::vector<Line> lines;
         std::vector<Rules::Cases> rule_cases;
 
@@ -18,6 +19,7 @@ class Parser {
     } state;
     Indent cur_indent;
     Token token;
+    Token last_token;
     std::vector<Line> lines;
     std::vector<Rules::Cases> rule_cases;
 
