@@ -24,7 +24,7 @@ int *main()
         }}
         result =
             result*x+a;
-          if_(i < n);
+          if(i < n)
         diff = diff*x+a*(n-i);
     }
         printf("\n%lld %lld\n", result, diff);

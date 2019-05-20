@@ -64,6 +64,10 @@ void Parser::parse_statement(int level)
         case lexem::DO:
             parse_iteration_statement(level+1);
             break;
+        case lexem::IF:
+        case lexem::SWITCH:
+            parse_selection_statement(level+1);
+            break;
         default:
             parse_simple_expr(level+1);
     }
@@ -71,6 +75,7 @@ void Parser::parse_statement(int level)
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
+
 
 /*
 iteration_statement = FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
@@ -81,8 +86,6 @@ void Parser::parse_iteration_statement(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-
-
 
     if (token == lexem::FOR) {  // FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
         pushCase(Rules::Cases::STATEMENT);
@@ -143,7 +146,51 @@ void Parser::parse_iteration_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-void selection_statement(int level = 0);
+
+/*
+selection_statement = IF '(' word_sequence ')' statement (ELSE statement) ?
+                    | SWITCH '(' word_sequence ')' statement
+*/
+void Parser::parse_selection_statement(int level)
+{
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+
+    if (token == lexem::IF) {  // IF '(' word_sequence ')' statement (ELSE statement) ?
+        pushCase(Rules::Cases::STATEMENT);
+        nextToken();
+        CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
+        nextToken();
+
+        parse_word_sequence(level + 1);
+
+        CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        popCase();
+
+        Scanner::State scan_state = scanner.saveState();
+        bool one_line_stmt = (scanner.nextToken() != lexem::RBRACE);
+        scanner.restoreState(scan_state);
+        if (one_line_stmt) {
+            pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
+        }
+        nextToken();
+
+        parse_statement(level + 1);
+
+        if (one_line_stmt) {
+            popCase();
+        }
+
+        if (token == lexem::ELSE) {
+            nextToken();
+            parse_statement(level + 1);
+        }
+    } // else if (token == lexem::SWITCH)
+
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
 
 
 /*

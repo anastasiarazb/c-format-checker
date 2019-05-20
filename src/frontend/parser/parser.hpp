@@ -55,7 +55,7 @@ public:
     void parse_pragma(int level = 0);
     void parse_statement(int level = 0);
     void parse_iteration_statement(int level = 0);
-    void selection_statement(int level = 0);
+    void parse_selection_statement(int level = 0);
     void parse_simple_expr(int level = 0);
     void parse_block(int level = 0);
     void parse_word_sequence(int level = 0);
