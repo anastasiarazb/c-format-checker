@@ -31,7 +31,7 @@ void Analyzer::first_pass()
             Rules::Cases state;
             do {
                 state = line.popState();
-            } while (state != Rules::Cases::BLOCK && state != Rules::Cases::STATEMENT);
+            } while (state != Rules::Cases::BLOCK && state != Rules::Cases::STATEMENT);  // TODO: check correctness, try return only one pop with BLOCK check
 //            Rules::Cases state = line.popState();
 //            if (state != Rules::Cases::BLOCK) {
 //                throw std::logic_error("Expected Rules::Cases::BLOCK, got " + to_string(state) \

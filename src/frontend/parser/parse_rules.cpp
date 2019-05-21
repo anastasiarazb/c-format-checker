@@ -14,13 +14,13 @@ void Parser::parse()
 {
     LOG(0, "Parse top level");
     nextToken();
-    Coords fragment_start = token.start();
+//    Coords fragment_start = token.start();
 
     while (token != lexem::END_OF_FILE) {
         parse_statement(1);
     }
 
-    Coords fragment_end = token.follow();
+//    Coords fragment_end = token.follow();
 //    LOG(get_image(fragment_start, fragment_end));
 }
 
@@ -196,7 +196,7 @@ void Parser::parse_selection_statement(int level)
 
 /*
 simple_statement = word_sequence SEMICOLON
-                 | word_sequence // if the last popped case was BLOCK, what means function definition
+                 | word_sequence // if word_sequence scanned function_definition or label
 */
 void Parser::parse_simple_expr(int level)
 {
@@ -204,12 +204,12 @@ void Parser::parse_simple_expr(int level)
     Coords fragment_start = token.start();
 
     pushCase(Rules::Cases::STATEMENT);
-    parse_word_sequence(level + 1);
-    if (last_case != Rules::Cases::BLOCK) {
+    Rules::Cases parsed_rule = parse_word_sequence(level + 1);
+    if (parsed_rule == Rules::Cases::STATEMENT) {
         CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON, lexem::RBRACE });
         popCase();
         nextToken();
-    } else {
+    } else if (parsed_rule == Rules::Cases::LABEL){
         popCase();
     }
 //    std::cout << token << " "  << std::endl;
@@ -248,15 +248,20 @@ void Parser::parse_block(int level)
 
 /*
 word = first \ {LBRACE, LPAREN}
-word_sequence = (word | '(' word_sequence ')' | initializer_list)* (IDENT '(' word_sequence ')' block) ?
+word_sequence = (word | '(' word_sequence ')' | initializer_list)*
+              | function_definition
+              | label
+function_definition = word_sequence IDENT '(' word_sequence ')' block
+label = IDENT ':'
  */
-void Parser::parse_word_sequence(int level)
+Rules::Cases Parser::parse_word_sequence(int level)
 {
     static const std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
         lexem::RBRACKET,  // ]
         lexem::LANGLE,    // <
         lexem::RANGLE,    // >
+        lexem::COLON,     // :
         lexem::COMMA,     // ,
         lexem::DOLLAR,    // $
         lexem::DOT,       // .
@@ -272,6 +277,7 @@ void Parser::parse_word_sequence(int level)
         lexem::ASSIGNOP,  // =, +=, -=, *=, /=, %=, &=, |=, ^=, <<=, >>=
         lexem::COMPAREOP, // >, <, !=, <=, =>, ==
         lexem::AMPERSAND, // &
+        lexem::QUESTIONMARK, // ?
         lexem::TYPENAME,
         lexem::TYPEDEF,
         lexem::KEYWORD,
@@ -282,35 +288,53 @@ void Parser::parse_word_sequence(int level)
     };
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
+    auto exit_actions = [&]() {
+        Coords fragment_end = token.start();
+        LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+        LOG(level, std::string(" ") + "parse_word_sequence" + std::string(", next = ") + std::string(token) << "\n\n");
+    };
     bool func_suspicious = false;  // check for pattern IDENT '(' word_sequence ')' '{'
-    bool parsed_function = false;
-    while (token.in(first) && !parsed_function) {
+    int len = 0;
+    while (token.in(first)) {
+        ++len;
         switch(token.type()) {
-        case lexem::LBRACE:
-            if (func_suspicious) { // function definition found => parse block
-                parse_block(level+1);
-                parsed_function = true;
-                break;
-            } else {
-                parse_initializer_list(level+1);
+            case lexem::LBRACE:
+                if (func_suspicious) { // function definition found => parse block
+                    popCase();  // close statement and start block
+                    parse_block(level+1);
+                    exit_actions();
+                    return Rules::Cases::FUNCTION;
+                } else {
+                    parse_initializer_list(level+1);
+                }
+                func_suspicious = false;
+                continue;
+            case lexem::LPAREN:
+                func_suspicious = (last_token == lexem::IDENT);
+                nextToken();
+                parse_word_sequence(level+1);
+                CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
+                nextToken();
+                continue;
+            case lexem::COLON:
+                if (last_token == lexem::IDENT && len == 2) { // IDENT ':'
+                    pushCase(Rules::Cases::LABEL);
+                    popCase();
+                    exit_actions();
+                    return Rules::Cases::LABEL;
+                } else {  // copy of default case
+                    nextToken();
+                    func_suspicious = false;
+                    continue;
+                }
+            default: {
+                nextToken();
+                func_suspicious = false;
             }
-            func_suspicious = false;
-            continue;
-        case lexem::LPAREN:
-            func_suspicious = (last_token == lexem::IDENT);
-            nextToken();
-            parse_word_sequence(level+1);
-            CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
-            nextToken();
-            continue;
-        default:
-            nextToken();
-            func_suspicious = false;
         }
     }
-    Coords fragment_end = token.start();
-    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
-    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+    exit_actions();
+    return Rules::Cases::STATEMENT;
 }
 
 /*
