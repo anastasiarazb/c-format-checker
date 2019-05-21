@@ -50,6 +50,7 @@ void Parser::parse_pragma(int level)
 statement = block
           | simple_expr
           | iteration_statement
+          | selection_statement
 */
 void Parser::parse_statement(int level)
 {
@@ -220,7 +221,7 @@ void Parser::parse_simple_expr(int level)
 }
 
 /*
-block = '{' parse_statement* '}'
+block = '{' statement* '}'
  */
 void Parser::parse_block(int level)
 {
@@ -313,7 +314,7 @@ void Parser::parse_word_sequence(int level)
 }
 
 /*
-parse_initializer_list = '{' parse_word_sequence '}'
+initializer_list = '{' word_sequence '}'
 */
 
 void Parser::parse_initializer_list(int level)
