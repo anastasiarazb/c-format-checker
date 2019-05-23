@@ -29,7 +29,7 @@ class Parser {
     std::list<std::string> errors_list;
 
     void         pushCase(Rules::Cases rule_case) {rule_cases.push_back(rule_case);}
-    Rules::Cases popCase() {last_case = rule_cases.back(); rule_cases.pop_back(); return last_case;}
+    Rules::Cases popCase();
     const Token &nextTokenPragma();
     const Token &nextToken();
     void         write_message(const std::string &message, char const *file, int line);

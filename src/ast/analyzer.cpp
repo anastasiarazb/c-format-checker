@@ -7,7 +7,7 @@
 Analyzer::Analyzer(const std::vector<Line> &other, Rules rules) :
     std::vector<Line>(other), rules(std::move(rules))
 {
-    first_pass();
+//    first_pass();
     collect_stats();
     std::cout << str_stats() << std::endl;
     analyze();
@@ -134,4 +134,20 @@ std::string Analyzer::error_messages() const
         ss << str << std::endl;
     }
     return ss.str();
+}
+
+
+void Analyzer::pushToken(Token token)
+{
+    back().push_back(token);
+}
+
+void Analyzer::newline(Indent indent)
+{
+    emplace_back(indent);
+}
+
+Token &Analyzer::lastToken()
+{
+    return back().back();
 }

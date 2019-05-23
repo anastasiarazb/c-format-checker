@@ -3,6 +3,7 @@
 
 #include "line.hpp"
 #include "state_vector.hpp"
+#include "frontend/lexer/token.hpp"
 #include <vector>
 #include <list>
 #include <string>
@@ -28,7 +29,9 @@ public:
     void collect_stats();
     void analyze();
     std::string error_messages() const;
-
+    void pushToken(Token token);
+    void newline(Indent indent);
+    Token &lastToken();
 };
 
 
