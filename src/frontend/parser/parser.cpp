@@ -112,6 +112,7 @@ std::string_view Parser::get_image(Coords start, Coords follow) const
 std::string Parser::get_lines() const
 {
     std::stringstream ss;
+    ss << "line:  indent [state] {tokens}\n";
     for (const Line &line: lines) {
         ss << std::string(line) << "\n";
     }

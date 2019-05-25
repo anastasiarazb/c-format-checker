@@ -12,6 +12,10 @@ Line::Line(Indent indent)
 Line::operator std::string() const
 {
     std::stringstream ss;
+    if (!empty()) {
+        const Token &elem = front();
+        ss << elem.start().get_line() <<":  ";
+    }
     ss << m_indent.len() << " " << std::string(m_state);
     ss << " {";
     for (const Token &tok: *this) {

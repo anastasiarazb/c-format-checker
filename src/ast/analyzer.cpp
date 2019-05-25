@@ -54,9 +54,11 @@ void Analyzer::collect_stats()
 std::string Analyzer::str_stats() const
 {
     std::stringstream ss;
+    ss << "line: [state] indent type coords: image\n";
     for (const std::pair<const StateVector, std::vector<Indent>> &elem: stats) {
         for (const Indent &id: elem.second) {
-            ss << std::string(elem.first) << " " << std::string(id) << "\n";
+            int coord_line = id.start().get_line();
+            ss << coord_line << ":  " << std::string(elem.first) << " " << std::string(id) << "\n";
         }
     }
     return ss.str();
