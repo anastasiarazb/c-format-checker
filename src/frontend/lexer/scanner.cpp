@@ -505,10 +505,15 @@ std::string_view Scanner::substring(Coords start, Coords follow) const
     return std::string_view(from, len);
 }
 
-Token Scanner::peekToken()
+Token Scanner::peekToken(bool dotall)
 {
     saveState();
     Token token = nextToken();
+    if (!dotall) {
+        while (token == lexem::NEWLINE) {  // skip newlines
+            token = nextToken();
+        }
+    }
     restoreState();
     return token;
 }

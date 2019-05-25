@@ -104,17 +104,7 @@ void Parser::parse_iteration_statement(int level)
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
-        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
-        if (one_line_stmt) {
-            pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
-        }
-        nextToken();
-
-        parse_statement(level + 1);
-
-        if (one_line_stmt) {
-            popCase();
-        }
+        parse_nested_statement(level + 1);
     } else if (token == lexem::WHILE) {  // WHILE '(' word_sequence ')' statement
         pushCase(Rules::Cases::STATEMENT);
         nextToken();
@@ -125,29 +115,9 @@ void Parser::parse_iteration_statement(int level)
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
-        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
-        if (one_line_stmt) {
-            pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
-        }
-        nextToken();
-
-        parse_statement(level + 1);
-
-        if (one_line_stmt) {
-            popCase();
-        }
+        parse_nested_statement(level + 1);
     } else if (token == lexem::DO) {  // DO statement WHILE '(' word_sequence ')' ';'
-        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
-        if (one_line_stmt) {
-            pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
-        }
-
-        nextToken();
-        parse_statement(level + 1);
-
-        if (one_line_stmt) {
-            popCase();
-        }
+        parse_nested_statement(level + 1);
 
         CHECK_TOKEN({ lexem::WHILE }, { lexem::WHILE });
         pushCase(Rules::Cases::STATEMENT);
@@ -192,21 +162,10 @@ void Parser::parse_selection_statement(int level)
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
 
-        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
-        if (one_line_stmt) {
-            pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
-        }
-        nextToken();
-
-        parse_statement(level + 1);
-
-        if (one_line_stmt) {
-            popCase();
-        }
+        parse_nested_statement(level + 1);
 
         if (token == lexem::ELSE) {
-            nextToken();
-            parse_statement(level + 1);
+            parse_nested_statement(level + 1);
         }
     } // else if (token == lexem::SWITCH)
 
@@ -215,6 +174,27 @@ void Parser::parse_selection_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
+
+/* Helper function for parse_selection_statement & parse_iteration_statement
+ */
+void Parser::parse_nested_statement(int level)
+{
+    bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
+    // allow_shift: allow make braces to the right of main statement (otherwise open-close baraces have
+    // the same nest level as leading if-else-for-while-do-switch expression
+    bool allow_shift = true;
+    std::cout << "Token & peek " << token << scanner.peekToken() << one_line_stmt << std::endl;
+    if (one_line_stmt || allow_shift) {
+        pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
+    }
+    nextToken();
+
+    parse_statement(level);
+
+    if (one_line_stmt || allow_shift) {
+        popCase();
+    }
+}
 
 /*
 simple_statement = word_sequence SEMICOLON
