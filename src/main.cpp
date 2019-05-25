@@ -16,13 +16,13 @@ using json = nlohmann::json;
 
 void test_params(int argc, char* argv[]) {
     if (argc < 2) {
-        std::cout << "Too less arguments!\n Usages: <program_source_file>\n. Please, try again!"
+        std::cout << "Too few arguments!\n Usages: <program_source_file>\n. Please, try again!"
                   << std::endl;
         exit(2);
     }
 
     if (argc > 2) {
-        std::cout << "Too much arguments, parameters ";
+        std::cout << "Too many arguments, parameters ";
         for (int i = 2; i < argc - 1; ++i) {
             std::cout << "\"" << argv[i] << "\", ";
         }
