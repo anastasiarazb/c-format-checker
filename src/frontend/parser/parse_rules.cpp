@@ -181,8 +181,8 @@ void Parser::parse_nested_statement(int level)
 {
     bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
     // allow_shift: allow make braces to the right of main statement (otherwise open-close baraces have
-    // the same nest level as leading if-else-for-while-do-switch expression
-    bool allow_shift = true;
+    // the same nest level as leading if-else-for-while-do-switch expression (more troubles than profits)
+    bool allow_shift = false;
     std::cout << "Token & peek " << token << scanner.peekToken() << one_line_stmt << std::endl;
     if (one_line_stmt || allow_shift) {
         pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
@@ -249,8 +249,8 @@ void Parser::parse_block(int level)
 
 
 /*
-word = first \ {LBRACE, LPAREN}
-word_sequence = (word | '(' word_sequence ')' | initializer_list)*
+word = first \ {LBRACE, LPAREN, STRUCT, UNION, ENUM}
+word_sequence = (word | '(' word_sequence ')' | initializer_list | union_struct_enum_definition)*
               | function_definition
               | label
 function_definition = word_sequence IDENT '(' word_sequence ')' block
@@ -283,6 +283,10 @@ Rules::Cases Parser::parse_word_sequence(int level)
         lexem::TYPENAME,
         lexem::TYPEDEF,
         lexem::KEYWORD,
+
+        lexem::STRUCT,
+        lexem::UNION,
+        lexem::ENUM,
 
         lexem::DOUBLEHASH,
         lexem::LBRACE,
@@ -318,6 +322,11 @@ Rules::Cases Parser::parse_word_sequence(int level)
                 CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
                 nextToken();
                 continue;
+            case lexem::STRUCT:
+            case lexem::UNION:
+            case lexem::ENUM:
+                parse_union_struct_enum_definition(level + 1);
+                continue;
             case lexem::COLON:
                 if (last_token == lexem::IDENT && len == 2) { // IDENT ':'
                     pushCase(Rules::Cases::LABEL);
@@ -339,22 +348,80 @@ Rules::Cases Parser::parse_word_sequence(int level)
     return Rules::Cases::STATEMENT;
 }
 
+
 /*
 initializer_list = '{' word_sequence '}'
 */
-
-void Parser::parse_initializer_list(int level)
+void Parser::parse_initializer_list(int level, Rules::Cases rule_to_push)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
-    nextToken();
 
+    pushCase(rule_to_push);
+    nextToken();
     parse_word_sequence(level + 1);
+    popCase();
 
     CHECK_TOKEN({lexem::RBRACE}, {lexem::RBRACE});
     nextToken();
+
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
+
+
+/*
+ union_struct_enum_definition = (STRUCT | UNION) IDENT? block  # declaration
+                             | (STRUCT | UNION) IDENT  # usage
+                             | ENUM IDENT? initializer_list  # declaration
+                             | ENUM IDENT  # usage
+*/
+void Parser::parse_union_struct_enum_definition(int level)
+{
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+    Rules::Cases rule_case;
+    switch (token.type()) {
+        case lexem::STRUCT:
+            rule_case = Rules::Cases::STRUCT;
+            break;
+        case lexem::UNION:
+            rule_case = Rules::Cases::UNION;
+            break;
+        case lexem::ENUM:
+            rule_case = Rules::Cases::ENUM;
+            break;
+        default:
+            throw std::logic_error("Expected token of types {STRUCT, UNION, ENUM}, got " + std::string(token) \
+                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__));
+    }
+
+    nextToken();
+    CHECK_TOKEN({lexem::IDENT, lexem::LBRACE}, {lexem::IDENT, lexem::LBRACE});
+    if (token == lexem::IDENT) {
+        nextToken();
+    }
+    // allow_shift: allow make braces to the right of main statement (otherwise open-close baraces have
+    // the same nest level as leading if-else-for-while-do-switch expression
+    bool allow_shift = false;
+    if (allow_shift) {
+        pushCase(rule_case);
+    }
+    if (token == lexem::LBRACE) {
+        if (rule_case == Rules::Cases::STRUCT || rule_case == Rules::Cases::UNION) {
+            parse_block(level + 1);
+        } else {  // rule_case == Rules::Cases::ENUM
+            // for enums rules are stricter than for ordinary initializer lists: set block structure
+            parse_initializer_list(level + 1, Rules::Cases::BLOCK);
+            nextToken();
+        }
+    }
+    if (allow_shift) {
+        popCase();
+    }
 
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));

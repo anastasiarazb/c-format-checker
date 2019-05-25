@@ -40,6 +40,7 @@ Scanner::Scanner(const char *path)
     keywords2type["if"] = lexem::IF;
     keywords2type["struct"] = lexem::STRUCT;
     keywords2type["switch"] = lexem::SWITCH;
+    keywords2type["union"] = lexem::UNION;
     keywords2type["while"] = lexem::WHILE;
     keywords2type["typedef"] = lexem::TYPEDEF;
 }

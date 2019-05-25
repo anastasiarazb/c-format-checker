@@ -46,6 +46,7 @@ std::string lexem::to_string(lexem::Type t)
         RETURN_NAME(IF);
         RETURN_NAME(STRUCT);
         RETURN_NAME(SWITCH);
+        RETURN_NAME(UNION);
         RETURN_NAME(WHILE);
         RETURN_NAME(TYPEDEF);
         RETURN_NAME(TYPENAME);

@@ -60,7 +60,8 @@ public:
     void parse_simple_expr(int level = 0);
     void parse_block(int level = 0);
     Rules::Cases parse_word_sequence(int level = 0);
-    void parse_initializer_list(int level = 0);
+    void parse_initializer_list(int level = 0, Rules::Cases rule_to_push=Rules::Cases::STATEMENT);
+    void parse_union_struct_enum_definition(int level = 0);
 };
 
 

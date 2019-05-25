@@ -49,6 +49,7 @@ enum Type {
     IF,
     STRUCT,
     SWITCH,
+    UNION,
     WHILE,
     TYPEDEF,
     TYPENAME,
