@@ -56,6 +56,7 @@ private:
 public:
     explicit Scanner(const char *path);
     Token nextToken();
+    Token peekToken();
     void  print_errors();
     State saveState();
     void  restoreState();

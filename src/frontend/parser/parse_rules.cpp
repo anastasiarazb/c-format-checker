@@ -104,9 +104,7 @@ void Parser::parse_iteration_statement(int level)
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
-        Scanner::State scan_state = scanner.saveState();
-        bool one_line_stmt = (scanner.nextToken() != lexem::LBRACE);
-        scanner.restoreState(scan_state);
+        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
         if (one_line_stmt) {
             pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
         }
@@ -127,9 +125,7 @@ void Parser::parse_iteration_statement(int level)
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
-        Scanner::State scan_state = scanner.saveState();
-        bool one_line_stmt = (scanner.nextToken() != lexem::LBRACE);
-        scanner.restoreState(scan_state);
+        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
         if (one_line_stmt) {
             pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
         }
@@ -141,9 +137,7 @@ void Parser::parse_iteration_statement(int level)
             popCase();
         }
     } else if (token == lexem::DO) {  // DO statement WHILE '(' word_sequence ')' ';'
-        Scanner::State scan_state = scanner.saveState();
-        bool one_line_stmt = (scanner.nextToken() != lexem::LBRACE);
-        scanner.restoreState(scan_state);
+        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
         if (one_line_stmt) {
             pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
         }
@@ -198,9 +192,7 @@ void Parser::parse_selection_statement(int level)
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
         popCase();
 
-        Scanner::State scan_state = scanner.saveState();
-        bool one_line_stmt = (scanner.nextToken() != lexem::LBRACE);
-        scanner.restoreState(scan_state);
+        bool one_line_stmt = (scanner.peekToken() != lexem::LBRACE);
         if (one_line_stmt) {
             pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
         }

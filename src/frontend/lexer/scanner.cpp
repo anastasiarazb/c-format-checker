@@ -504,3 +504,11 @@ std::string_view Scanner::substring(Coords start, Coords follow) const
     const char *from = program.c_str() + start.get_pos();
     return std::string_view(from, len);
 }
+
+Token Scanner::peekToken()
+{
+    saveState();
+    Token token = nextToken();
+    restoreState();
+    return token;
+}
