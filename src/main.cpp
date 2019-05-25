@@ -18,7 +18,7 @@ void test_params(int argc, char* argv[]) {
     if (argc < 2) {
         std::cout << "Too less arguments!\n Usages: <program_source_file>\n. Please, try again!"
                   << std::endl;
-        exit(1);
+        exit(2);
     }
 
     if (argc > 2) {
@@ -77,6 +77,11 @@ int main(int argc, char* argv[])
     std::cout << parser.get_errors_list() << std::endl;
 
     Analyzer a(parser.get_token_table(), r);
-    return 0;
+    std::string mistakes = a.error_messages();
+    if (mistakes.empty()) {
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
