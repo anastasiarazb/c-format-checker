@@ -92,9 +92,9 @@ void Parser::parse_statement(int level)
 }
 
 /*
-labeled_statement = IDENT ':'
-                  | CASE word_sequence ':'
-                  | DEFAULT ':'
+labeled_statement = IDENT ':' statement
+                  | CASE word_sequence ':' statement
+                  | DEFAULT ':' statement
  */
 
 void Parser::parse_labeled_statement(int level)
@@ -111,6 +111,7 @@ void Parser::parse_labeled_statement(int level)
         popCase(false);  // [... LABEL]
         popCase(false);  // [...]
         nextToken();  // follow
+        parse_statement(level + 1);
     } else if (token == lexem::CASE) {
 
     } else if (token == lexem::DEFAULT) {
@@ -298,7 +299,7 @@ word_sequence = (word | '(' word_sequence ')' | initializer_list | union_struct_
               | function_definition
 function_definition = word_sequence IDENT '(' word_sequence ')' block
  */
-Rules::Cases Parser::parse_word_sequence(int level)
+Rules::Cases Parser::parse_word_sequence(int level, Rules::Cases where_am_I)
 {
     static const std::vector<lexem::Type> first = {
         lexem::LBRACKET,  // [
@@ -360,7 +361,7 @@ Rules::Cases Parser::parse_word_sequence(int level)
             case lexem::LPAREN:
                 func_suspicious = (last_token == lexem::IDENT);
                 nextToken();
-                parse_word_sequence(level+1);
+                parse_word_sequence(level+1, Rules::Cases::CORTEGE);
                 CHECK_TOKEN({lexem::RPAREN}, {lexem::RPAREN});
                 nextToken();
                 continue;
@@ -369,6 +370,21 @@ Rules::Cases Parser::parse_word_sequence(int level)
             case lexem::ENUM:
                 parse_union_struct_enum_definition(level + 1);
                 continue;
+            case lexem::QUESTIONMARK:
+                parse_word_sequence(level, Rules::Cases::TERNARY_EXPRESSION);
+                continue;
+            case lexem::COLON:
+                if (where_am_I == Rules::Cases::TERNARY_EXPRESSION) {
+                    nextToken();
+                    exit_actions();
+                    return Rules::Cases::TERNARY_EXPRESSION;
+                } if (where_am_I == Rules::Cases::CASE) {
+                    exit_actions();
+                    return Rules::Cases::STATEMENT;
+                } else {
+                    nextToken();
+                    continue;
+                }
 //            case lexem::COLON:
 //                if (last_token == lexem::IDENT && len == 2) { // IDENT ':'
 //                    pushCase(Rules::Cases::LABEL);
