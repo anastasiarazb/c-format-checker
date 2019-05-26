@@ -50,6 +50,7 @@ statement = block
           | simple_expr
           | iteration_statement
           | selection_statement
+          | labeled_statement
 */
 void Parser::parse_statement(int level)
 {
@@ -68,6 +69,20 @@ void Parser::parse_statement(int level)
         case lexem::SWITCH:
             parse_selection_statement(level+1);
             break;
+        case lexem::CASE:
+        case lexem::DEFAULT:
+            parse_labeled_statement(level + 1);
+            break;
+        case lexem::IDENT:
+        {
+            Token next = scanner.peekToken();
+            if (next == lexem::COLON) {
+                parse_labeled_statement(level + 1);
+            } else {
+                parse_simple_expr(level + 1);
+            }
+            break;
+        }
         default:
             parse_simple_expr(level+1);
     }
@@ -76,6 +91,30 @@ void Parser::parse_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
+void Parser::parse_labeled_statement(int level)
+{
+    LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
+    Coords fragment_start = token.start();
+
+    if (token == lexem::IDENT) {  // [... LABEL] IDENT ; [... LABEL STATEMENT] ':' ; [...] ...
+        rule_cases.push_back(Rules::Cases::LABEL);
+        lines.correctState(rule_cases);  // [... LABEL]
+        rule_cases.push_back(Rules::Cases::STATEMENT);  // [... LABEL STATEMENT]
+        nextToken();
+        CHECK_TOKEN({lexem::COLON}, {lexem::COLON});  // ':'
+        popCase(false);  // [... LABEL]
+        popCase(false);  // [...]
+        nextToken();  // follow
+    } else if (token == lexem::CASE) {
+
+    } else if (token == lexem::DEFAULT) {
+
+    }
+
+    Coords fragment_end = token.start();
+    LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
+    LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
+}
 
 /*
 iteration_statement = FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
@@ -251,9 +290,7 @@ void Parser::parse_block(int level)
 word = first \ {LBRACE, LPAREN, STRUCT, UNION, ENUM}
 word_sequence = (word | '(' word_sequence ')' | initializer_list | union_struct_enum_definition)*
               | function_definition
-              | label
 function_definition = word_sequence IDENT '(' word_sequence ')' block
-label = IDENT ':'
  */
 Rules::Cases Parser::parse_word_sequence(int level)
 {
@@ -299,9 +336,9 @@ Rules::Cases Parser::parse_word_sequence(int level)
         LOG(level, std::string(" ") + "parse_word_sequence" + std::string(", next = ") + std::string(token) << "\n\n");
     };
     bool func_suspicious = false;  // check for pattern IDENT '(' word_sequence ')' '{'
-    int len = 0;
+//    int len = 0;
     while (token.in(first)) {
-        ++len;
+//        ++len;
         switch(token.type()) {
             case lexem::LBRACE:
                 if (func_suspicious) { // function definition found => parse block
@@ -326,17 +363,17 @@ Rules::Cases Parser::parse_word_sequence(int level)
             case lexem::ENUM:
                 parse_union_struct_enum_definition(level + 1);
                 continue;
-            case lexem::COLON:
-                if (last_token == lexem::IDENT && len == 2) { // IDENT ':'
-                    pushCase(Rules::Cases::LABEL);
-                    popCase();
-                    exit_actions();
-                    return Rules::Cases::LABEL;
-                } else {  // copy of default case
-                    nextToken();
-                    func_suspicious = false;
-                    continue;
-                }
+//            case lexem::COLON:
+//                if (last_token == lexem::IDENT && len == 2) { // IDENT ':'
+//                    pushCase(Rules::Cases::LABEL);
+//                    popCase();
+//                    exit_actions();
+//                    return Rules::Cases::LABEL;
+//                } else {  // copy of default case
+//                    nextToken();
+//                    func_suspicious = false;
+//                    continue;
+//                }
             default: {
                 nextToken();
                 func_suspicious = false;

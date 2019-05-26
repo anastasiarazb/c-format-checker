@@ -9,7 +9,7 @@
 class TokenTable: public std::vector<Line> {
 public:
     void pushToken(const Token &token);
-    void newline(Indent indent, const StateVector &rule_cases);
+    void addLine(Indent indent, const StateVector &rule_cases);
     Token &lastToken();
     void correctState(const StateVector &rule_cases);
 };

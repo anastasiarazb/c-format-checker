@@ -31,7 +31,7 @@ public:
     void analyze();
     std::string error_messages() const;
 //    void pushToken(Token token);
-//    void newline(Indent indent);
+//    void addLine(Indent indent);
 //    Token &lastToken();
 };
 

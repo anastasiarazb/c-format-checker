@@ -6,7 +6,7 @@ void TokenTable::pushToken(const Token &token)
     back().push_back(token);
 }
 
-void TokenTable::newline(Indent indent, const StateVector &rule_cases)
+void TokenTable::addLine(Indent indent, const StateVector &rule_cases)
 {
     if (back().empty()) {  // Store only non_empty lines
         pop_back();

@@ -144,7 +144,7 @@ std::string Analyzer::error_messages() const
 //    back().push_back(token);
 //}
 //
-//void Analyzer::newline(Indent indent)
+//void Analyzer::addLine(Indent indent)
 //{
 //    emplace_back(indent);
 //}

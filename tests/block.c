@@ -2,6 +2,8 @@
 
 int *main()
 {{
+    hello
+    :
         {
 
         }

@@ -86,11 +86,7 @@ const Token& Parser::nextToken()
             cur_indent.update(token);
             token = scanner.nextToken();
         }
-        if (lines.back().empty()) {
-            lines.pop_back();
-        }
-        lines.emplace_back(cur_indent);
-        lines.back().addState(rule_cases);
+        lines.addLine(cur_indent, rule_cases);
     }
     switch (token.type()) {
         case lexem::Type::BACKSLASH:
@@ -99,7 +95,7 @@ const Token& Parser::nextToken()
             parse_pragma();
             return token;
         default:
-            lines.back().push_back(token);
+            lines.pushToken(token);
             return token;
     }
 }
@@ -124,9 +120,10 @@ Rules::Cases Parser::popCase(bool correct_current_token)
     last_case = rule_cases.back();
     rule_cases.pop_back();
     if (correct_current_token) {
-        if (lines.back().size() == 1) {  // one token in line => correct line state (exclude follow token from rule)
-            lines.back().popState();
-        }
+        lines.correctState(rule_cases);
+//        if (lines.back().size() == 1) {  // one token in line => correct line state (exclude follow token from rule)
+//            lines.back().popState();
+//        }
     }
     return last_case;
 }
