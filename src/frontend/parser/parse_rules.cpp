@@ -186,7 +186,6 @@ void Parser::parse_iteration_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-
 /*
 selection_statement = IF '(' word_sequence ')' statement (ELSE statement) ?
                     | SWITCH '(' word_sequence ')' statement
@@ -219,8 +218,8 @@ void Parser::parse_selection_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
-
-/* Helper function for parse_selection_statement & parse_iteration_statement
+/*
+ * Helper function for parse_selection_statement & parse_iteration_statement
  */
 void Parser::parse_nested_statement(int level)
 {
@@ -243,7 +242,7 @@ void Parser::parse_nested_statement(int level)
 
 /*
 simple_statement = word_sequence SEMICOLON
-                 | word_sequence // if word_sequence scanned function_definition or label
+                 | word_sequence // if word_sequence scanned function_definition
 */
 void Parser::parse_simple_expr(int level)
 {
@@ -256,8 +255,6 @@ void Parser::parse_simple_expr(int level)
         CHECK_TOKEN({ lexem::SEMICOLON }, { lexem::SEMICOLON, lexem::RBRACE });
         popCase();
         nextToken();
-    } else if (parsed_rule == Rules::Cases::LABEL){
-        popCase();
     }
 //    std::cout << token << " "  << std::endl;
 
@@ -298,6 +295,16 @@ word = first \ {LBRACE, LPAREN, STRUCT, UNION, ENUM}
 word_sequence = (word | '(' word_sequence ')' | initializer_list | union_struct_enum_definition)*
               | function_definition
 function_definition = word_sequence IDENT '(' word_sequence ')' block
+cortege = '(' word_sequence ')'
+
+Constraints:
+ 1. COLON ':' meaning:
+    if where_am_I == TERNARY_EXPRESSION treat COLON ':' as part of it
+    if where_am_I == CASE treat COLON ':' as closing symbol
+    else (where_am_I is STATEMENT or CORTEGE)
+ 2. LBRACE '{' meaning:
+    if we parsed cortege, and there was an IDENT before it => it was a function definition, parse block, return FUNCTION
+    otherwise it is start of an initializer_list => parse initializer_list, continue
  */
 Rules::Cases Parser::parse_word_sequence(int level, Rules::Cases where_am_I)
 {
@@ -371,6 +378,7 @@ Rules::Cases Parser::parse_word_sequence(int level, Rules::Cases where_am_I)
                 parse_union_struct_enum_definition(level + 1);
                 continue;
             case lexem::QUESTIONMARK:
+                nextToken();
                 parse_word_sequence(level, Rules::Cases::TERNARY_EXPRESSION);
                 continue;
             case lexem::COLON:
