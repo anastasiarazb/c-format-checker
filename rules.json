@@ -1,7 +1,9 @@
 {
   "block" : ["+"],
+  "switch" : ["any"],
   "case" : ["0", "+"],
-  "case_statement" : ["+"],
+  "case_statement" : ["0", "+"],
+  "case_block" : ["0", "+"],
   "cortege" : ["any"],
   "enum" : ["+"],
   "function" : ["+"],

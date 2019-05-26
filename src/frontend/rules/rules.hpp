@@ -8,7 +8,8 @@ class Rules {
 
 public:
     enum class Cases {
-        BLOCK, CASE, CASE_STATEMENT, CORTEGE, ENUM, FUNCTION, IF_ELSE_WHILE_DO, LABEL, PRAGMA, STATEMENT, STRUCT, UNION,
+        BLOCK, SWITCH, CASE, CASE_STATEMENT, CASE_BLOCK, CORTEGE, FUNCTION, IF_ELSE_WHILE_DO, LABEL, PRAGMA, STATEMENT,
+        STRUCT,  ENUM, UNION,
         TERNARY_EXPRESSION // TERNARY_EXPRESSION is only for inner use; it should never be pushed to StateVector
     };
 

@@ -14,6 +14,7 @@ const std::unordered_map<std::string, Rules::Cases> &Rules::str2case() {
         {
             {"statement",        Rules::Cases::STATEMENT},
             {"struct",           Rules::Cases::STRUCT},
+            {"switch",           Rules::Cases::SWITCH},
             {"enum",             Rules::Cases::ENUM},
             {"union",            Rules::Cases::UNION},
             {"function",         Rules::Cases::FUNCTION},
@@ -21,6 +22,7 @@ const std::unordered_map<std::string, Rules::Cases> &Rules::str2case() {
             {"label",            Rules::Cases::LABEL},
             {"case",             Rules::Cases::CASE},
             {"case_statement",   Rules::Cases::CASE_STATEMENT},
+            {"case_block",       Rules::Cases::CASE_BLOCK},
             {"block",            Rules::Cases::BLOCK},
             {"pragma",           Rules::Cases::PRAGMA},
             {"cortege",          Rules::Cases::CORTEGE}
@@ -42,13 +44,15 @@ const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Indent>> &Rules
     static const std::unordered_map<Rules::Cases, std::unordered_set<Rules::Indent>> rules_default{
         {Rules::Cases::STATEMENT,        {Rules::Indent::ANY}},
         {Rules::Cases::STRUCT,           {Rules::Indent::PLUS}},
+        {Rules::Cases::SWITCH,           {Rules::Indent::ANY}},
         {Rules::Cases::ENUM,             {Rules::Indent::PLUS}},
         {Rules::Cases::UNION,            {Rules::Indent::PLUS}},
         {Rules::Cases::FUNCTION,         {Rules::Indent::PLUS}},
         {Rules::Cases::IF_ELSE_WHILE_DO, {Rules::Indent::PLUS}},
         {Rules::Cases::LABEL,            {Rules::Indent::START, Rules::Indent::ZERO}},
         {Rules::Cases::CASE,             {Rules::Indent::ZERO,  Rules::Indent::PLUS}},
-        {Rules::Cases::CASE_STATEMENT,   {Rules::Indent::PLUS}},
+        {Rules::Cases::CASE_STATEMENT,   {Rules::Indent::ZERO,  Rules::Indent::PLUS}},
+        {Rules::Cases::CASE_BLOCK,       {Rules::Indent::ZERO,  Rules::Indent::PLUS}},
         {Rules::Cases::BLOCK,            {Rules::Indent::PLUS}},
         {Rules::Cases::PRAGMA,           {Rules::Indent::START}},
         {Rules::Cases::CORTEGE,          {Rules::Indent::ANY}},
@@ -115,6 +119,7 @@ std::string to_string(const Rules::Cases &obj)
     static std::unordered_map<Rules::Cases, std::string> represents {
         {Rules::Cases::STATEMENT,        "STATEMENT"},
         {Rules::Cases::STRUCT,           "STRUCT"},
+        {Rules::Cases::SWITCH,           "SWITCH"},
         {Rules::Cases::ENUM,             "ENUM"},
         {Rules::Cases::UNION,            "UNION"},
         {Rules::Cases::FUNCTION,         "FUNCTION"},
@@ -122,6 +127,7 @@ std::string to_string(const Rules::Cases &obj)
         {Rules::Cases::LABEL,            "LABEL"},
         {Rules::Cases::CASE,             "CASE"},
         {Rules::Cases::CASE_STATEMENT,   "CASE_STATEMENT"},
+        {Rules::Cases::CASE_BLOCK,       "CASE_BLOCK"},
         {Rules::Cases::BLOCK,            "BLOCK"},
         {Rules::Cases::PRAGMA,           "PRAGMA"},
         {Rules::Cases::CORTEGE,          "CORTEGE"},
