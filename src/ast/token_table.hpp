@@ -1,5 +1,5 @@
 #ifndef C_FORMAT_CHECKER_TOKENTABLE_HPP
-#define C_FORMAT_CHECKER_TOKEN_TABLE_HPP
+#define C_FORMAT_CHECKER_TOKENTABLE_HPP
 
 #include "line.hpp"
 #include "state_vector.hpp"

@@ -1,4 +1,3 @@
-#include <ast/analyzer.hpp>
 #include "parser.hpp"
 
 #define CHECK_TOKEN(...) checkToken(__VA_ARGS__, __FILE__, __LINE__)

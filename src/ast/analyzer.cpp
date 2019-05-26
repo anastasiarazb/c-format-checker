@@ -4,8 +4,8 @@
 #include <unordered_map>
 #include <algorithm>
 
-Analyzer::Analyzer(const std::vector<Line> &other, Rules rules) :
-    std::vector<Line>(other), rules(std::move(rules))
+Analyzer::Analyzer(const TokenTable &other, Rules rules) :
+    TokenTable(other), rules(std::move(rules))
 {
 //    first_pass();
     collect_stats();
@@ -139,17 +139,17 @@ std::string Analyzer::error_messages() const
 }
 
 
-void Analyzer::pushToken(Token token)
-{
-    back().push_back(token);
-}
-
-void Analyzer::newline(Indent indent)
-{
-    emplace_back(indent);
-}
-
-Token &Analyzer::lastToken()
-{
-    return back().back();
-}
+//void Analyzer::pushToken(Token token)
+//{
+//    back().push_back(token);
+//}
+//
+//void Analyzer::newline(Indent indent)
+//{
+//    emplace_back(indent);
+//}
+//
+//Token &Analyzer::lastToken()
+//{
+//    return back().back();
+//}

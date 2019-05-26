@@ -3,6 +3,7 @@
 
 #include "ast/indent.hpp"
 #include "ast/line.hpp"
+#include "ast/token_table.hpp"
 #include <frontend/lexer/scanner.hpp>
 #include <frontend/rules/rules.hpp>
 
@@ -11,7 +12,7 @@ class Parser {
         Indent cur_indent;
         Token token;
         Token last_token;
-        std::vector<Line> lines;
+        TokenTable lines;
         std::vector<Rules::Cases> rule_cases;
         Rules::Cases last_case;
 
@@ -21,7 +22,7 @@ class Parser {
     Indent cur_indent;
     Token token;
     Token last_token;
-    std::vector<Line> lines;
+    TokenTable lines;
     StateVector rule_cases;
     Rules::Cases last_case;
 
@@ -49,7 +50,7 @@ public:
     std::string get_lines() const;
     void readNewlines();
     std::string_view get_image(Coords start, Coords follow) const;
-    std::vector<Line> &get_token_table() {return lines;};
+    TokenTable &get_token_table() {return lines;};
 
     void parse();
     void parse_pragma(int level = 0);
