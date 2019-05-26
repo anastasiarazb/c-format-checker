@@ -91,6 +91,12 @@ void Parser::parse_statement(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", next = ") + std::string(token) << "\n\n");
 }
 
+/*
+labeled_statement = IDENT ':'
+                  | CASE word_sequence ':'
+                  | DEFAULT ':'
+ */
+
 void Parser::parse_labeled_statement(int level)
 {
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
