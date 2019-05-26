@@ -119,12 +119,14 @@ std::string Parser::get_lines() const
     return ss.str();
 }
 
-Rules::Cases Parser::popCase()
+Rules::Cases Parser::popCase(bool correct_current_token)
 {
     last_case = rule_cases.back();
     rule_cases.pop_back();
-    if (lines.back().size() == 1) {  // one token in line => correct line state (exclude follow token from rule)
-        lines.back().popState();
+    if (correct_current_token) {
+        if (lines.back().size() == 1) {  // one token in line => correct line state (exclude follow token from rule)
+            lines.back().popState();
+        }
     }
     return last_case;
 }

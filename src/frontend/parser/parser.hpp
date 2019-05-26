@@ -22,14 +22,14 @@ class Parser {
     Token token;
     Token last_token;
     std::vector<Line> lines;
-    std::vector<Rules::Cases> rule_cases;
+    StateVector rule_cases;
     Rules::Cases last_case;
 
     Scanner &scanner;
     std::list<std::string> errors_list;
 
     void         pushCase(Rules::Cases rule_case) {rule_cases.push_back(rule_case);}
-    Rules::Cases popCase();
+    Rules::Cases popCase(bool correct_current_token=true);
     const Token &nextTokenPragma();
     const Token &nextToken();
     void         write_message(const std::string &message, char const *file, int line);

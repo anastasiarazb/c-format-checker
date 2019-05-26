@@ -12,12 +12,13 @@ class Line : public std::vector<Token> {
     StateVector m_state;
 public:
     explicit Line(Indent indent);
-    void addState(const std::vector<Rules::Cases> &rule_cases);
+    void addState(const StateVector &rule_cases);
     Rules::Cases popState();
     Rules::Cases &backState();
     Indent indent() const {return m_indent;}
     const StateVector &states() const {return m_state;}
-    void reset_indent(Indent new_indent);
+    void resetIndent(Indent new_indent);
+    void resetState(const StateVector &new_state);
     explicit operator std::string() const;
 };
 

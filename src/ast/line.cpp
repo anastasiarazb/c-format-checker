@@ -25,11 +25,16 @@ Line::operator std::string() const
     return ss.str();
 }
 
-void Line::reset_indent(Indent new_indent) {
-    this->m_indent = new_indent;
+void Line::resetIndent(Indent new_indent) {
+    m_indent = new_indent;
 }
 
-void Line::addState(const std::vector<Rules::Cases> &rule_cases)
+void Line::resetState(const StateVector &new_state)
+{
+    m_state = new_state;
+}
+
+void Line::addState(const StateVector &rule_cases)
 {
     m_state = rule_cases;
 }
