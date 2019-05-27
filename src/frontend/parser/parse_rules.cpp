@@ -112,10 +112,40 @@ void Parser::parse_labeled_statement(int level)
         popCase(false);  // [...]
         nextToken();  // follow
         parse_statement(level + 1);
-    } else if (token == lexem::CASE) {
+    } else if (token == lexem::CASE || token == lexem::DEFAULT) {
+        lexem::Type type = token.type();
+//        Rules::Cases top_rule = rule_cases.back();
+//        if (top_rule != Rules::Cases::SWITCH
+//            && top_rule != Rules::Cases::CASE_STATEMENT
+//            && top_rule != Rules::Cases::CASE_BLOCK) {
+//            throw std::logic_error("Expected rule in {SWITCH, CASE_STATEMENT}, got " + to_string(top_rule) \
+//                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__));
+//        }
+//        rule_cases.pop_back();  // SWITCH if first, CASE_STATEMENT or CASE_BLOCK otherwise
 
-    } else if (token == lexem::DEFAULT) {
-
+        rule_cases.push_back(Rules::Cases::CASE);
+        lines.correctState(rule_cases);  // [... CASE] (CASE | DEFAULT);
+        rule_cases.push_back(Rules::Cases::STATEMENT);  // [... CASE STATEMENT]
+        nextToken();                                         // CASE | DEFAULT
+        if (type == lexem::CASE) {
+            parse_word_sequence(level + 1, Rules::Cases::CASE);  // word_sequence (if CASE)
+        }
+        CHECK_TOKEN({lexem::COLON}, {lexem::COLON});         // ':'
+        popCase(false);  // [... CASE]
+        popCase(false);  // [...]
+//        nextToken();
+//        bool block = (scanner.peekToken() == lexem::LBRACE);
+//        if (block) {
+//            rule_cases.push_back(Rules::Cases::CASE_BLOCK);
+//        } else {
+//            rule_cases.push_back(Rules::Cases::CASE_BLOCK);
+//            rule_cases.push_back(Rules::Cases::CASE_STATEMENT);
+//        }
+        // TODO: handle the case where first block has indent eq to case, but following are to the right (???)
+        rule_cases.push_back(Rules::Cases::CASE_STATEMENT);  // [... CASE_STATEMENT]
+        nextToken();
+        parse_statement(level + 1);
+        rule_cases.pop_back();  // [...]
     }
 
     Coords fragment_end = token.start();
@@ -211,7 +241,19 @@ void Parser::parse_selection_statement(int level)
         if (token == lexem::ELSE) {
             parse_nested_statement(level + 1);
         }
-    } // else if (token == lexem::SWITCH)
+    } else if (token == lexem::SWITCH) {  // SWITCH '(' word_sequence ')' statement
+        pushCase(Rules::Cases::STATEMENT);
+        nextToken();
+        CHECK_TOKEN({lexem::LPAREN}, {lexem::LPAREN});
+        nextToken();
+
+        parse_word_sequence(level + 1);
+
+        CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
+        popCase();
+
+        parse_nested_statement(level + 1);
+    }
 
     Coords fragment_end = token.start();
     LOG(0, GREEN_TEXT(get_image(fragment_start, fragment_end)));
@@ -228,6 +270,7 @@ void Parser::parse_nested_statement(int level)
     // the same nest level as leading if-else-for-while-do-switch expression (more troubles than profits)
     bool allow_shift = false;
     std::cout << "Token & peek " << token << scanner.peekToken() << one_line_stmt << std::endl;
+    // TODO: handle Whitesmiths and GNU styles.
     if (one_line_stmt || allow_shift) {
         pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
     }
