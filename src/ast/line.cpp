@@ -13,8 +13,7 @@ Line::operator std::string() const
 {
     std::stringstream ss;
     if (!empty()) {
-        const Token &elem = front();
-        ss << elem.start().get_line() <<":  ";
+        ss << number() <<":  ";
     }
     ss << m_indent.len() << " " << std::string(m_state);
     ss << " {";
@@ -48,4 +47,9 @@ Rules::Cases Line::popState()
 
 Rules::Cases &Line::backState() {
     return m_state.back();
+}
+
+int Line::number() const
+{
+    return front().start().get_line();
 }

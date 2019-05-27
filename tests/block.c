@@ -3,11 +3,14 @@
 int *main()
 {{
     hello
-    :
+        :
         {
 
         }
         int *x = (int[]){1,
+                         2, 3};
+        int *y =
+     (int[]){1,
                          2, 3};
         long long n, x;
         scanf("%lld%lld", &n, &x);

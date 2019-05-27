@@ -27,3 +27,37 @@ void TokenTable::correctState(const StateVector &rule_cases)
         back().resetState(rule_cases);
     }  // else: do nothing
 }
+
+Line &TokenTable::getLine(int num_in_src, int &num_in_vector)
+{
+    num_in_vector = -1;
+    if (back().number() < num_in_src) {
+        throw std::range_error(std::string(__FUNCTION__) + ": index " + std::to_string(num_in_src)
+                               + " out of range (max= " + std::to_string(back().number()) + ").");
+    }
+    for(int i = 0; (size_t)i < size(); ++i) {
+        Line &line = at(i);
+        if (line.number() == num_in_src) {
+            num_in_vector = i;
+            return line;
+        }
+    }
+    throw std::range_error(std::string(__FUNCTION__) + ": index " + std::to_string(num_in_src) + " not found.");
+}
+
+
+int TokenTable::vectorIndex(int source_index)
+{
+    if (back().number() < source_index) {
+        throw std::range_error(std::string(__FUNCTION__) + ": index " + std::to_string(source_index)
+                               + " out of range (max= " + std::to_string(back().number()) + ").");
+
+    }
+    for(size_t i = 0; i < size(); ++i) {
+        if (at(i).number() == source_index) {
+            return i;
+        }
+    }
+    throw std::range_error(std::string(__FUNCTION__) + ": index " + std::to_string(source_index) + " not found.");
+//    return  -1;
+}

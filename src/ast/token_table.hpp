@@ -12,6 +12,8 @@ public:
     void addLine(Indent indent, const StateVector &rule_cases);
     Token &lastToken();
     void correctState(const StateVector &rule_cases);
+    Line &getLine(int num_in_src, int &num_in_vector);
+    int vectorIndex(int source_index);
 };
 
 

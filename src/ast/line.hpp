@@ -20,6 +20,7 @@ public:
     void resetIndent(Indent new_indent);
     void resetState(const StateVector &new_state);
     explicit operator std::string() const;
+    int number() const;  // number of the line in source text
 };
 
 

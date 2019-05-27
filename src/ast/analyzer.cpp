@@ -73,7 +73,20 @@ void Analyzer::analyze()
         for (const Indent &ind: indents) {
             whitespaces += ind.spaces();
             tabs += ind.tabs();
+
+            // Case of statement splitted by lines: check to be not to the left of the previous line
+            if (!state.empty() && state.back() == Rules::Cases::STATEMENT) {
+                int line = ind.start().get_line();  // number of the line in the program
+                int index = vectorIndex(line);      // index of the line in token table
+                const Line &parent = at(index-1);   // error cannot occur in the first line => [index-1] is ok
+                Indent parent_indent = parent.indent();
+                if (ind.len() < parent_indent.len()) {
+                    add_error(state, ind, "ошибка", "Продолжение выражения левее предыдущей строки.");
+                }
+            }
+
             if (ind.len() == standard.len()) {
+                standard = ind;  // make standard the last one with the same properties
                 if (ind.mixed()) {
                     add_error(state, ind, "предупреждение", "Использование пробелов и табуляций.");
 //                    std::cout << error_list.back() << std::endl;
@@ -82,10 +95,14 @@ void Analyzer::analyze()
                                                     "Использование табуляций (ранее использовались пробелы).");
 //                    std::cout << error_list.back() << std::endl;
                 }
-            } else if (rules[state.back()].count(Rules::Indent::ANY) == 0){
-                add_error(state, ind, standard, "ошибка");
+            } else {
+                if (state.empty() || rules[state.back()].count(Rules::Indent::ANY) == 0) {
+                    add_error(state, ind, standard, "ошибка");
+                }
 //                std::cout << error_list.back() << std::endl;
             }
+
+
         }
     }
 }
