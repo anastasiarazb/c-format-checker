@@ -6,15 +6,18 @@ int main(void)
         if1  // Лейбл и последующее выражение - одно утверждение
           :  // перенос
         printf("if 1 printf1\n");  // printf(...) относится к if(...) => отступ как у лейбла выше
-    case 1 ? 1 : 0:
-        printf("hello\n");
-    case 1 ? 1
-    : 0: {
+
+    switch(1) {
+        case 1 ? 1 : 0:
+            printf("hello\n");
+        case 1 ? 1
+               : 0: {
             printf("hello\n");
         }
-    case 1 ? 1 : 0: {
-        printf("hello\n");
+        case 1 ? 1 : 0: {
+            printf("hello\n");
+        }
+        default:
+            printf("");
     }
-    default:
-        printf("");
 }

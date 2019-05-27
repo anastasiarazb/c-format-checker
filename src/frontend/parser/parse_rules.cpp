@@ -114,16 +114,16 @@ void Parser::parse_labeled_statement(int level)
         parse_statement(level + 1);
     } else if (token == lexem::CASE || token == lexem::DEFAULT) {
         lexem::Type type = token.type();
-//        Rules::Cases top_rule = rule_cases.back();
-//        if (top_rule != Rules::Cases::SWITCH
-//            && top_rule != Rules::Cases::CASE_STATEMENT
-//            && top_rule != Rules::Cases::CASE_BLOCK) {
-//            throw std::logic_error("Expected rule in {SWITCH, CASE_STATEMENT}, got " + to_string(top_rule) \
-//                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__));
-//        }
-//        rule_cases.pop_back();  // SWITCH if first, CASE_STATEMENT or CASE_BLOCK otherwise
+        Rules::Cases top_rule = rule_cases.back();  //  [... CASE_STATEMENT]
+        if (top_rule != Rules::Cases::SWITCH
+            && top_rule != Rules::Cases::CASE_STATEMENT
+            && top_rule != Rules::Cases::CASE_BLOCK) {
+            throw std::logic_error("Expected rule in {SWITCH, CASE_STATEMENT}, got " + to_string(top_rule) \
+                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__));
+        }
+        rule_cases.pop_back();  // [... CASE_STATEMENT] -> [...]
 
-        rule_cases.push_back(Rules::Cases::CASE);
+        rule_cases.push_back(Rules::Cases::CASE);  // [... CASE]
         lines.correctState(rule_cases);  // [... CASE] (CASE | DEFAULT);
         rule_cases.push_back(Rules::Cases::STATEMENT);  // [... CASE STATEMENT]
         nextToken();                                         // CASE | DEFAULT
@@ -145,7 +145,8 @@ void Parser::parse_labeled_statement(int level)
         rule_cases.push_back(Rules::Cases::CASE_STATEMENT);  // [... CASE_STATEMENT]
         nextToken();
         parse_statement(level + 1);
-        rule_cases.pop_back();  // [...]
+        // return to selection_statement with [... CASE_STATEMENT]
+//        rule_cases.pop_back();  // [...]
     }
 
     Coords fragment_end = token.start();
@@ -218,7 +219,8 @@ void Parser::parse_iteration_statement(int level)
 
 /*
 selection_statement = IF '(' word_sequence ')' statement (ELSE statement) ?
-                    | SWITCH '(' word_sequence ')' statement
+                    | SWITCH '(' word_sequence ')' switch_statement
+switch_statement == statement with complex rule management => realized inside
 */
 void Parser::parse_selection_statement(int level)
 {
@@ -250,9 +252,32 @@ void Parser::parse_selection_statement(int level)
         parse_word_sequence(level + 1);
 
         CHECK_TOKEN({ lexem::RPAREN }, { lexem::RPAREN });
-        popCase();
+        popCase();  // current token = ')'
+        // Start parse switch_statement
+        bool one_line = (scanner.peekToken() != lexem::LBRACE);
+        if (one_line) {
+            pushCase(Rules::Cases::SWITCH);
+            parse_statement(level + 1);
+            popCase();
+        } else {  // block
+            nextToken(); // '{'
+            pushCase(Rules::Cases::SWITCH);
+            nextToken();
+            // parse part before labels at state [... SWITCH]
+            while (token.notEOF() && !token.in({lexem::RBRACE, lexem::CASE, lexem::DEFAULT})) {
+                parse_statement(level + 1);\
+            }
+            popCase();  // [...]
+            pushCase(Rules::Cases::CASE_STATEMENT); // [... CASE_STATEMENT]
+            while (token.notEOF() && token != lexem::RBRACE) {
+                parse_statement(level + 1);
+            }
+            popCase();
 
-        parse_nested_statement(level + 1);
+            CHECK_TOKEN({ lexem::RBRACE }, { lexem::RBRACE });
+            nextToken();
+
+        }
     }
 
     Coords fragment_end = token.start();
