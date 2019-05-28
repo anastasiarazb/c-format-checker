@@ -7,12 +7,14 @@
 #include <sstream>
 #include <algorithm>
 
-Scanner::Scanner(const char *path)
+Scanner::Scanner(const Params &params)
+: params(params)
 {
+    const std::string &path = params.source;
     std::ifstream file (path, std::ios::in);
     if (!file) {
-        printf("No such file %s\n", path);
-        exit(2);
+        std::cout << cannot_open_file_message(path) << std::endl;
+        exit(EXIT_CODE_FILE_ACCESS_ERROR);
     }
     std::stringstream ss;
     ss << "\n" << file.rdbuf();
@@ -493,10 +495,12 @@ Token Scanner::scanNum() {
     return tokenOfType(lexem::NUM);
 }
 
-void Scanner::print_errors() {
+std::string Scanner::error_messages() {
+    std::stringstream ss;
     for (const auto & message: errors_list) {
-        std::cout << message << std::endl;
+        ss << message << std::endl;
     }
+    return ss.str();
 }
 
 std::string_view Scanner::substring(Coords start, Coords follow) const

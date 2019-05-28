@@ -3,6 +3,7 @@
 
 #include "frontend/lexer/token.hpp"
 #include "frontend/lexer/coords.hpp"
+#include "params.hpp"
 #include <list>
 #include <string>
 #include <unordered_map>
@@ -18,6 +19,8 @@ public:
         int   token_len;
         std::list<std::string> errors_list;
     };
+
+    const Params &params;
 private:
     std::string program;
     std::unordered_map<std::string_view, lexem::Type> keywords2type;
@@ -54,10 +57,10 @@ private:
     Token tokenOfType(lexem::Type type);
     void  add_error(const std::string &message);
 public:
-    explicit Scanner(const char *path);
+    explicit Scanner(const Params &params);
     Token nextToken();
     Token peekToken(bool dotall = false);
-    void  print_errors();
+    std::string error_messages();
     State saveState();
     void  restoreState();
     State restoreState(const State &backup);

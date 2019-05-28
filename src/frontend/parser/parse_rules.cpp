@@ -3,8 +3,10 @@
 #define CHECK_TOKEN(...) checkToken(__VA_ARGS__, __FILE__, __LINE__)
 #define LOG(level, ...) \
 { \
-    for (int i = 0; i < level; ++i) std::cout <<  '>';  \
-    std::cout << __VA_ARGS__ << std::endl; \
+    std::string ws;\
+    for (int i = 0; i < level; ++i) ws +=  '>';  \
+    logs << ws << __VA_ARGS__ << std::endl; \
+    if (params.log_level == Params::LogLevel::DEBUG) std::cout << ws << __VA_ARGS__ << std::endl; \
 }
 #define GREEN_TEXT(x) (x.empty() ? std::string("@@") : std::string("@\033[1;32m") + std::string(x) + "\033[0m@")
 
@@ -294,7 +296,6 @@ void Parser::parse_nested_statement(int level)
     // allow_shift: allow make braces to the right of main statement (otherwise open-close baraces have
     // the same nest level as leading if-else-for-while-do-switch expression (more troubles than profits)
     bool allow_shift = false;
-    std::cout << "Token & peek " << token << scanner.peekToken() << one_line_stmt << std::endl;
     // TODO: handle Whitesmiths and GNU styles.
     if (one_line_stmt || allow_shift) {
         pushCase(Rules::Cases::IF_ELSE_WHILE_DO);
@@ -340,7 +341,6 @@ void Parser::parse_block(int level)
 //    if (level > 5) exit(1);
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
-    std::cout << "LEVEL = " << level << std::string(fragment_start) << std::endl;
 
     CHECK_TOKEN({lexem::LBRACE}, {lexem::LBRACE});
     pushCase(Rules::Cases::BLOCK);

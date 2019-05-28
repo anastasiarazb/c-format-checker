@@ -4,13 +4,21 @@
 #include <unordered_map>
 #include <algorithm>
 
-Analyzer::Analyzer(const TokenTable &other, Rules rules) :
-    TokenTable(other), rules(std::move(rules))
+
+#define LOG(...) \
+{ \
+    logs <<  __VA_ARGS__ << std::endl; \
+    if (params.log_level == Params::LogLevel::DEBUG) std::cout << __VA_ARGS__ << std::endl; \
+}
+
+
+Analyzer::Analyzer(const TokenTable &other, Rules rules,  const Params &params, std::ostream &logs) :
+    TokenTable(other), rules(std::move(rules)), params(params), logs(logs)
 {
 //    first_pass();
     collect_stats();
-    std::cout << str_stats() << std::endl;
-    analyze();
+    LOG(str_stats());
+//    analyze();
     std::cout << error_messages() << std::endl;
 }
 

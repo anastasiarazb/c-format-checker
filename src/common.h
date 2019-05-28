@@ -1,6 +1,8 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include <string>
+
 //#define DEBUG_LEXER
 //#ifdef  DEBUG_LEXER
 //#define log_l printf
@@ -25,5 +27,7 @@
 #define EXIT_CODE_FILE_ACCESS_ERROR 4
 #define EXIT_CODE_PARSING_ERROR 5
 #define EXIT_CODE_INTERNAL_ERROR 6
+
+std::string cannot_open_file_message(const std::string &path);
 
 #endif //LEXER_H

@@ -4,8 +4,9 @@
 #include "ast/indent.hpp"
 #include "ast/line.hpp"
 #include "ast/token_table.hpp"
-#include <frontend/lexer/scanner.hpp>
-#include <frontend/rules/rules.hpp>
+#include "frontend/lexer/scanner.hpp"
+#include "frontend/rules/rules.hpp"
+#include <sstream>
 
 class Parser {
     struct State {
@@ -27,6 +28,9 @@ class Parser {
     Rules::Cases last_case;
 
     Scanner &scanner;
+    const Params &params;
+    std::ostream &logs;
+//    std::stringstream logs;
     std::list<std::string> errors_list;
 
     void         pushCase(Rules::Cases rule_case) {rule_cases.push_back(rule_case);}
@@ -42,11 +46,11 @@ class Parser {
                             const std::vector<lexem::Type> &skip_until,
                             char const *file, int line);
 public:
-    explicit Parser(Scanner &scan);
+    explicit Parser(Scanner &scan, const Params &params, std::ostream &logs);
     State saveState();
     void restoreState();
     State restoreState(const State &backup);
-    std::string get_errors_list() const;
+    std::string error_messages() const;
     std::string get_lines() const;
     void readNewlines();
     std::string_view get_image(Coords start, Coords follow) const;
@@ -64,6 +68,7 @@ public:
     Rules::Cases parse_word_sequence(int level = 0, Rules::Cases where_am_I = Rules::Cases::STATEMENT);
     void parse_initializer_list(int level = 0, Rules::Cases rule_to_push=Rules::Cases::STATEMENT);
     void parse_union_struct_enum_definition(int level = 0);
+//    std::string get_logs() const {return logs.str();};
 };
 
 
