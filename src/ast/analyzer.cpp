@@ -93,16 +93,22 @@ void Analyzer::analyze()
                 }
             }
 
+            if (ind.mixed()) {
+                add_error(state, ind, "ошибка", "Использование пробелов и табуляций.");
+                exit_code = EXIT_CODE_MIXED_SPACES;
+                return;
+//                    std::cout << error_list.back() << std::endl;
+            } else if (ind.tabs() != 0) {
+                add_error(state, ind, "ошибка",
+                          "Использование табуляций (ранее использовались пробелы).");
+                exit_code = EXIT_CODE_MIXED_SPACES;
+                return;
+//                    std::cout << error_list.back() << std::endl;
+            }
+
             if (ind.len() == standard.len()) {
                 standard = ind;  // make standard the last one with the same properties
-                if (ind.mixed()) {
-                    add_error(state, ind, "предупреждение", "Использование пробелов и табуляций.");
-//                    std::cout << error_list.back() << std::endl;
-                } else if (ind.tabs() != 0) {
-                    add_error(state, ind, "предупреждение",
-                                                    "Использование табуляций (ранее использовались пробелы).");
-//                    std::cout << error_list.back() << std::endl;
-                }
+
             } else {
                 if (state.empty() || rules[state.back()].count(Rules::Indent::ANY) == 0) {
                     add_error(state, ind, standard, "ошибка");
@@ -141,6 +147,9 @@ std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
 void Analyzer::add_error(const StateVector &state, const Indent &err_ind, const Indent &standard
     , const std::string &level, const std::string &assumption)
 {
+    if (exit_code == EXIT_CODE_OK) {
+        exit_code = EXIT_CODE_INDENT_ERROR;
+    }
     std::string message = wrap_error(state, err_ind, standard, level, assumption);
 //    std::cout << message << std::endl;
     error_list[err_ind.follow().get_line()] = message;
@@ -148,6 +157,9 @@ void Analyzer::add_error(const StateVector &state, const Indent &err_ind, const 
 void Analyzer::add_error(const StateVector &state, const Indent &err_ind
     , const std::string &level, const std::string &assumption)
 {
+    if (exit_code == EXIT_CODE_OK) {
+        exit_code = EXIT_CODE_INDENT_ERROR;
+    }
     std::string message = wrap_error(state, err_ind, level, assumption);
 //    std::cout << message << std::endl;
     error_list[err_ind.follow().get_line()] = message;
