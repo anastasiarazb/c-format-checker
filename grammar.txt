@@ -4,7 +4,7 @@ statement = block
           | simple_expr
           | iteration_statement
           | selection_statement
-          | label_statement
+          | labeled_statement
           
 iteration_statement = FOR '(' word_sequence ';' word_sequence ';' word_sequence ')' statement
                     | WHILE '(' word_sequence ')' statement
@@ -14,7 +14,7 @@ selection_statement = IF '(' word_sequence ')' statement (ELSE statement) ?
                     | SWITCH '(' word_sequence ')' statement
 
 simple_statement = word_sequence SEMICOLON
-                 | word_sequence // if the last popped case was BLOCK, what means function definition or label_statement
+                 | word_sequence // if word_sequence scanned function_definition
 
 block = '{' statement* '}'
 
@@ -45,9 +45,7 @@ word =  lexem::LBRACKET,  // [
 
 word_sequence = (word | '(' word_sequence ')' | initializer_list | union_struct_enum_definition)*
               | function_definition
-              | label
 function_definition = word_sequence IDENT '(' word_sequence ')' block
-label = IDENT ':'
 
 initializer_list = '{' word_sequence '}'
 
@@ -55,7 +53,7 @@ label_statement = IDENT ':'
                 | CASE word_sequence ':'
                 | DEFAULT ':'
                 
-union_struct_enum_definition = (STRUCT | UNION) IDENT? block
+ union_struct_enum_definition = (STRUCT | UNION) IDENT? block
                              | (STRUCT | UNION) IDENT
                              | ENUM IDENT? initializer_list
                              | ENUM IDENT

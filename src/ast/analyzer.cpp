@@ -94,7 +94,7 @@ void Analyzer::analyze()
             }
 
             if (ind.mixed()) {
-                add_error(state, ind, "ошибка", "Использование пробелов и табуляций.");
+                add_error(state, ind, "ошибка", "Использование пробелов и табуляций в одном отступе.");
                 exit_code = EXIT_CODE_MIXED_SPACES;
                 return;
 //                    std::cout << error_list.back() << std::endl;
@@ -111,7 +111,11 @@ void Analyzer::analyze()
 
             } else {
                 if (state.empty() || rules[state.back()].count(Rules::Indent::ANY) == 0) {
-                    add_error(state, ind, standard, "ошибка");
+//                    const char * hint = params.log_level == Params::LogLevel::QUIET
+//                            ? "Несоответствие уровню вложенности."
+//                            : "";
+                    const char * hint = "";
+                    add_error(state, ind, standard, "ошибка", hint);
                 }
 //                std::cout << error_list.back() << std::endl;
             }
@@ -126,9 +130,9 @@ std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
 {
     std::stringstream ss;
 
-    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": ";
+    ss << "[Анализ отступов] строка "<< err_ind.follow().get_line() << ": ";
     if (params.log_level == Params::LogLevel::QUIET) {
-        ss << "некорректный отступ. " << assumption;
+        ss << "некорректный отступ. "; // << assumption;
         return ss.str();
     }
     ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped()
@@ -143,9 +147,9 @@ std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
                                   , const std::string &level, const std::string &assumption) const
 {
     std::stringstream ss;
-    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": ";
+    ss << "[Анализ отступов] строка "<< err_ind.follow().get_line() << ": ";
     if (params.log_level == Params::LogLevel::QUIET) {
-        ss << "некорректный отступ. " << assumption;
+        ss << "некорректный отступ. "; // << assumption;
         return ss.str();
     }
     ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped() << ">. "

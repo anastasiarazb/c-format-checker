@@ -7,7 +7,7 @@
 
 struct Params {
     int argc;
-    enum class LogLevel {QUIET, VERBOSE, DEBUG} log_level = LogLevel::QUIET;
+    enum class LogLevel {QUIET, VERBOSE, DEBUG} log_level = LogLevel::VERBOSE;
     std::string source;
     std::string log_path = "c-format-checker.log";
     std::ofstream logs;
@@ -39,8 +39,8 @@ struct Params {
         ".\n"
         "ОПЦИИ\n"
         "       -f, --file    Файл исходного текста программы на языке С (ключ -f не требуется, если этот аргумент идет первым).\n"
-        "       -q, --quiet   Выводить кратко описание ошибок (по умолчанию).\n"
-        "       -v, --verbose Выводить развернутые описания ошибок.\n"
+        "       -q, --quiet   Выводить кратко описание ошибок.\n"
+        "       -v, --verbose Выводить развернутые описания ошибок (по умолчанию).\n"
         "       -d, --debug   Выводить отладочную информацию.\n"
         "       --help        Помощь.\n"
         "       -l, --logfile Имя файла для записи отладочной информации (по умолчанию: " + log_path + ").\n"

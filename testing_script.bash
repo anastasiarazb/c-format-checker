@@ -1,6 +1,6 @@
-prog="c-format-checker/bin/c-format-checker"  # $1
-src="091 Фибоначчиевы строки"  # $2
-src="094 Наибольший простой делитель"
+prog=$1 # "c-format-checker/bin/c-format-checker"  
+src=$2  # "091 Фибоначчиевы строки"  # $2
+#src="094 Наибольший простой делитель"
 #src="148 Полином"
 
 for i in "$src"/*
