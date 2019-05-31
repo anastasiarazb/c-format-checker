@@ -65,7 +65,7 @@ def wrapper(word):
 
 
 if __name__=='__main__':
-    with open('src/frontend/lexer/token.hpp', 'r') as f:
+    with open('token.hpp', 'r') as f:
         raw_txt = f.read()
     re_comment = re.compile(r"(//.*)|(/[*].*[*]/)", re.U)
     raw_txt = re_comment.sub('', raw_txt)
@@ -81,7 +81,7 @@ if __name__=='__main__':
     # with open('codegen_output.txt', 'w') as f:
     #    f.write(output)
 
-    with open('src/frontend/lexer/token.cpp', 'r') as f:
+    with open('token.cpp', 'r') as f:
         output_old = f.read()
         # print(output_old)
         aim_re = re.compile(r'''
@@ -96,6 +96,6 @@ if __name__=='__main__':
 
         output = output_old.replace(old, output)
         if output:
-            with open('src/frontend/lexer/token.cpp', 'w') as f:
+            with open('token.cpp', 'w') as f:
                 # print(output)
                 f.write(output)
