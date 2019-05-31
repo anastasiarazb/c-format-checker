@@ -125,8 +125,13 @@ std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
                                   , const std::string &level, const std::string &assumption) const
 {
     std::stringstream ss;
-    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": " <<  level
-       << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped()
+
+    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": ";
+    if (params.log_level == Params::LogLevel::QUIET) {
+        ss << "некорректный отступ. " << assumption;
+        return ss.str();
+    }
+    ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped()
        << ">. Ранее на том же уровне вложенности в строке " << standard.follow().get_line()
        << " отступ ширины " << standard.len()
        << ": <" << standard.image_escaped() << ">. "
@@ -138,8 +143,12 @@ std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
                                   , const std::string &level, const std::string &assumption) const
 {
     std::stringstream ss;
-    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": " <<  level
-       << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped() << ">. "
+    ss << "[Анализ отступов], строка "<< err_ind.follow().get_line() << ": ";
+    if (params.log_level == Params::LogLevel::QUIET) {
+        ss << "некорректный отступ. " << assumption;
+        return ss.str();
+    }
+    ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped() << ">. "
        << assumption;
     return ss.str();
 }
