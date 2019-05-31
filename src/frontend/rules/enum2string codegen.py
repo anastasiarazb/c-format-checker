@@ -2,7 +2,7 @@ import re
 import os
 
 name = 'Rule'
-filename = 'src/frontend/rules/rules.hpp'
+filename = 'rules.hpp'
 
 with open(filename, 'r') as f:
     content = f.read()
