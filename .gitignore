@@ -6,3 +6,4 @@ misc.xml
 modules.xml
 vcs.xml
 CMakeLists.txt.*
+.directory
