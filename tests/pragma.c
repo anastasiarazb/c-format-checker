@@ -1,9 +1,9 @@
   #define SOMETHING1  \
+\
   sdfarwag \ asdf
     ghjkjg \
      gsdgdfssdfg \
       hklkhj \
-\
 x
       1
 #define SOMETHING2 jk;ljadf

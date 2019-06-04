@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     parser.parse();
     LOG(parser.get_lines());
     std::string parser_errors = parser.error_messages();
-    if (!scanner_errors.empty()) {
+    if (!parser_errors.empty()) {
         logfile   << "Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
         std::cout << "Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
         exit(EXIT_CODE_PARSING_ERROR);

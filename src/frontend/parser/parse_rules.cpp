@@ -30,12 +30,15 @@ void Parser::parse_pragma(int level)
     LOG(level, std::string(" ") + __func__ + std::string(", first = ") + std::string(token));
     Coords fragment_start = token.start();
     while (token != lexem::Type::NEWLINE && token != lexem::END_OF_FILE) {
-        nextTokenPragma();
+//        if (scanner.peekToken() != lexem::Type::BACKSLASH) {
+//            nextTokenPragma();
+//        }
         if (token == lexem::Type::BACKSLASH) {
             nextTokenPragma();
             CHECK_TOKEN({lexem::Type::NEWLINE}, {lexem::Type::NEWLINE});
-            nextTokenPragma(); // skip newline to allow multi-line defines
+//            nextTokenPragma(); // skip newline to allow multi-line defines
         }
+        nextTokenPragma();
     }
     Coords fragment_end = token.follow();
     while (token == lexem::NEWLINE) {

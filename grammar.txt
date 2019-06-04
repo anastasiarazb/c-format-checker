@@ -27,7 +27,7 @@ word =  lexem::LBRACKET,  // [
         lexem::DOLLAR,    // $
         lexem::DOT,       // .
         lexem::ELLIPSIS,  // ...
-        lexem::IDENT,     // [a-zA-Z][a-zA-Z0-9]*
+        lexem::IDENT,     // [a-zA-Z_][a-zA-Z_0-9]*
         lexem::STRING,    // ".*"
         lexem::CHAR,      // '\n'
         lexem::NUM,       // [0-9a-fA-FuUlLxX]+(\.
