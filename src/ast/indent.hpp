@@ -13,6 +13,8 @@ public:
     explicit Indent(Token newline_tok);
     explicit operator std::string() const;
     bool operator==(const Indent &other) const;
+    bool operator<(const Indent &other) const {return len() < other.len();}
+    bool operator>(const Indent &other) const {return len() > other.len();}
     void update(Token newline_tok);
     bool mixed() const { return m_tabs > 0 && m_spaces > 0; }
     int  len(int tablen=4) const { return m_spaces + m_tabs * tablen; }

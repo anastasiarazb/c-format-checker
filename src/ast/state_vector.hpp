@@ -13,6 +13,7 @@ public:
         std::vector<Rules::Cases>(o) {}
     explicit operator std::string() const;
     bool contains(const Rules::Cases &val) const;
+    bool child_of(const StateVector &other) const {return other.size() < size();}
 };
 
 

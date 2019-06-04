@@ -31,20 +31,23 @@ Analyzer::operator std::string() const
     return ss.str();
 }
 
+
+// Check that if one statement is nested then it is not to left to the  parent
 void Analyzer::first_pass()
 {
-    for(Line &line: *this) {
-        Token &first_sym = line.front();
-        if (first_sym == lexem::Type::RBRACE) {
-            Rules::Cases state;
-            do {
-                state = line.popState();
-            } while (state != Rules::Cases::BLOCK && state != Rules::Cases::STATEMENT);  // TODO: check correctness, try return only one pop with BLOCK check
-//            Rules::Cases state = line.popState();
-//            if (state != Rules::Cases::BLOCK) {
-//                throw std::logic_error("Expected Rules::Cases::BLOCK, got " + to_string(state) \
-                + " at " + __FUNCTION__ + ", " + std::to_string(__LINE__) + ": " + std::string(line));
-//            }
+    auto prev_line = cbegin();
+    for(auto line = cbegin(); line != cend(); ++line) {
+        const StateVector state = line->states();
+        const StateVector state_prev = prev_line->states();
+        if (state.child_of(state_prev)
+            && line->indent() < prev_line->indent())
+        {
+            if (!state.contains(Rules::Cases::LABEL) && !(state.back() == Rules::Cases::STATEMENT)) {
+                add_error(state, line->indent(), "ошибка", "Вложенное выражение левее объемлющего.");
+            }
+        }
+        if (state.empty() || state.back() != Rules::Cases::STATEMENT) {
+            prev_line = line;
         }
     }
 
@@ -74,6 +77,8 @@ std::string Analyzer::str_stats() const
 
 void Analyzer::analyze()
 {
+    first_pass();
+
     bool whitespaces = false;
     bool tabs = false;
     for (const auto &[state, indents]: stats) {
