@@ -7,3 +7,5 @@ modules.xml
 vcs.xml
 CMakeLists.txt.*
 .directory
+*.scannerwork/
+*bw-output/
