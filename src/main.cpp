@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
         exit(EXIT_CODE_FILE_ACCESS_ERROR);
     }
     logfile << "Анализ программы " << params.source << std::endl;
-    Rules rules("../rules.json");
+    Rules rules("rules.json");
     LOG("Rules:\n" << rules);
 
     Scanner debug_scanner(params);

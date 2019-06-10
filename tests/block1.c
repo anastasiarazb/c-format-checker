@@ -4,6 +4,8 @@ int *main()
 {
     while(0){}
     hello:
+    if (x<2)
+  goto hello;
     void hello(int val) {
         printf("hello\n");
     }
