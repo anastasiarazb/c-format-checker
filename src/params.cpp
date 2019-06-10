@@ -58,3 +58,14 @@ Params::~Params()
         logs.close();
     }
 }
+
+std::string Params::message_header(int line_number) const
+{
+    std::stringstream ss;
+    ss << source;
+    if (line_number > 0) {
+        ss << " (строка " << line_number << ")";
+    }
+    ss << ":";
+    return ss.str();
+}

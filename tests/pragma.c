@@ -1,6 +1,6 @@
   #define SOMETHING1  \
 \
-  sdfarwag \ asdf
+  sdfarwag \ //asdf
     ghjkjg \
      gsdgdfssdfg \
       hklkhj \
@@ -21,4 +21,6 @@ x
 \
 \\\\\\
 \
-   123 2345 gfds;;;; {123 455; { {}qeqwe;}}
+     123 2345 gfds;;;; {123 455; { {}qeqwe;}}
+
+        // таб <		>

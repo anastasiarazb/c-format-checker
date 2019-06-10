@@ -55,6 +55,8 @@ struct Params {
     ;
     Params(int argc, char* argv[]);
     ~Params();
+
+    std::string message_header(int line_number = -1) const;
 };
 
 #endif //C_FORMAT_CHECKER_PARAMS_HPP

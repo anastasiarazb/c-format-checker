@@ -3,10 +3,13 @@
 
 #include <unordered_map>
 #include <unordered_set>
+#include <string>
+#include <vector>
 
 class Rules {
 
 public:
+
     enum class Cases {
         BLOCK, SWITCH, CASE, CASE_STATEMENT, CASE_BLOCK, CORTEGE, FUNCTION, IF_ELSE_WHILE_DO, LABEL, PRAGMA, STATEMENT,
         STRUCT,  ENUM, UNION,
@@ -14,17 +17,21 @@ public:
     };
 
     enum class Indent {
-        PLUS, ZERO, START, ANY
+        ANY, PLUS, // ZERO, START
     };
+    const Indent DEFAULT_INDENT = Indent::PLUS;
     static const std::unordered_map<std::string, Cases> &str2case();
     static const std::unordered_map<std::string, Indent> &str2rule();
     static const std::unordered_map<Cases, std::unordered_set<Indent>> &case2rule_default();
-    explicit Rules(const char *path);
+    explicit Rules(const std::string &path);
     explicit operator std::string() const;
     std::unordered_set<Indent> &operator[](Cases usage);
+    const std::string path() {return m_path;}
 
 private:
     std::unordered_map<Cases, std::unordered_set<Indent>> case2rule;
+    std::string m_path;
+    std::unordered_set<Rules::Indent> from_vec(const std::vector<std::string> &values);
 
 };
 

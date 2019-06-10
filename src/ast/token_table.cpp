@@ -28,9 +28,8 @@ void TokenTable::correctState(const StateVector &rule_cases)
     }  // else: do nothing
 }
 
-Line &TokenTable::getLine(int num_in_src, int &num_in_vector)
+Line &TokenTable::getLine(int num_in_src, int *num_in_vector)
 {
-    num_in_vector = -1;
     if (back().number() < num_in_src) {
         throw std::range_error(std::string(__FUNCTION__) + ": index " + std::to_string(num_in_src)
                                + " out of range (max= " + std::to_string(back().number()) + ").");
@@ -38,7 +37,9 @@ Line &TokenTable::getLine(int num_in_src, int &num_in_vector)
     for(int i = 0; (size_t)i < size(); ++i) {
         Line &line = at(i);
         if (line.number() == num_in_src) {
-            num_in_vector = i;
+            if (num_in_vector != nullptr) {
+                *num_in_vector = i;
+            }
             return line;
         }
     }

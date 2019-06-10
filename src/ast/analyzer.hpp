@@ -17,21 +17,18 @@ class Analyzer: public TokenTable {
     std::ostream &logs;
     std::map<StateVector, std::vector<Indent>> stats;
     std::map<int, std::string> error_list;
-    std::string wrap_error(const StateVector &state, const Indent &err_ind, const Indent &standard
-                            , const std::string &level="error", const std::string &assumption="") const;
-    std::string wrap_error(const StateVector &state, const Indent &err_ind
-                            , const std::string &level="error", const std::string &assumption="") const;
-    void add_error(const StateVector &state, const Indent &err_ind, const Indent &standard
-        , const std::string &level="error", const std::string &assumption="");
-    void add_error(const StateVector &state, const Indent &err_ind
-        , const std::string &level="error", const std::string &assumption="");
+    std::string wrap_error(const std::string &error_level, const std::string &assumption, const Indent &wrong_indent,
+                           bool add_standard = false, const Indent &standard_indent = Indent()) const;
+    void        add_error(const std::string &error_level, const std::string &assumption, const Indent &wrong_indent,
+                           bool add_standard = false, const Indent &standard_indent = Indent());
     int exit_code = EXIT_CODE_OK;
 public:
     std::string str_stats() const;
     explicit Analyzer(const TokenTable &other, Rules rules, const Params &params, std::ostream &logs);
     explicit operator std::string() const;
-    void first_pass();
+    void preprocess_pass();
     void collect_stats();
+    void check_nested();
     void analyze();
     std::string error_messages() const;
     int get_exit_code() const {return exit_code;}

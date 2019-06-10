@@ -74,8 +74,8 @@ int main(int argc, char* argv[])
 
     std::string scanner_errors = debug_scanner.error_messages();
     if (!scanner_errors.empty()) {
-        logfile   << "Ошибка на этапе лексического анализа: " << scanner_errors << std::endl;
-        std::cout << "Ошибка на этапе лексического анализа: " << scanner_errors << std::endl;
+        logfile   << params.message_header() << " Ошибка на этапе лексического анализа: " << scanner_errors << std::endl;
+        std::cout << params.message_header() << " Ошибка на этапе лексического анализа: " << scanner_errors << std::endl;
         exit(EXIT_CODE_PARSING_ERROR);
     }
 
@@ -85,8 +85,8 @@ int main(int argc, char* argv[])
     LOG(parser.get_lines());
     std::string parser_errors = parser.error_messages();
     if (!parser_errors.empty()) {
-        logfile   << "Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
-        std::cout << "Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
+        logfile   << params.message_header() << " Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
+        std::cout << params.message_header() << " Ошибка на этапе синтаксического анализа: " << parser_errors << std::endl;
         exit(EXIT_CODE_PARSING_ERROR);
     }
 

@@ -15,11 +15,11 @@
 Analyzer::Analyzer(const TokenTable &other, Rules rules,  const Params &params, std::ostream &logs) :
     TokenTable(other), rules(std::move(rules)), params(params), logs(logs)
 {
-//    first_pass();
+    preprocess_pass();
     collect_stats();
     LOG(str_stats());
 //    analyze();
-    std::cout << error_messages() << std::endl;
+//    std::cout << error_messages() << std::endl;
 }
 
 Analyzer::operator std::string() const
@@ -31,9 +31,18 @@ Analyzer::operator std::string() const
     return ss.str();
 }
 
+void Analyzer::preprocess_pass()
+{
+    // trunc last line if it is empty
+    auto last_line = --end();
+    if (last_line->front() == lexem::END_OF_FILE) {
+        erase(last_line);
+    }
+}
 
-// Check that if one statement is nested then it is not to left to the  parent
-void Analyzer::first_pass()
+
+// Check that if one statement is nested then it is not to left to the parent
+void Analyzer::check_nested()
 {
     auto prev_line = cbegin();
     for(auto line = cbegin(); line != cend(); ++line) {
@@ -43,15 +52,14 @@ void Analyzer::first_pass()
             && line->indent() < prev_line->indent())
         {
             if (!state.contains(Rules::Cases::LABEL) && !(state.back() == Rules::Cases::STATEMENT)) {
-                add_error(state, line->indent(), "ошибка", "Вложенное выражение левее объемлющего.");
+                std::string message = "Вложенное выражение левее объемлющего.";
+                add_error("ошибка", message, line->indent());
             }
         }
         if (state.empty() || state.back() != Rules::Cases::STATEMENT) {
             prev_line = line;
         }
     }
-
-    std::cout << std::string(*this) << std::endl;
 }
 
 void Analyzer::collect_stats()
@@ -77,7 +85,7 @@ std::string Analyzer::str_stats() const
 
 void Analyzer::analyze()
 {
-    first_pass();
+    check_nested();
 
     bool whitespaces = false;
     bool tabs = false;
@@ -94,18 +102,26 @@ void Analyzer::analyze()
                 const Line &parent = at(index-1);   // error cannot occur in the first line => [index-1] is ok
                 Indent parent_indent = parent.indent();
                 if (ind.len() < parent_indent.len()) {
-                    add_error(state, ind, "ошибка", "Продолжение выражения левее предыдущей строки.");
+                    const char * message = params.log_level != Params::LogLevel::QUIET
+                                           ? "Продолжение выражения левее предыдущей строки."
+                                           : "Ошибка отступа при переносе выражения.";
+                    add_error("ошибка", message, ind);
                 }
             }
 
             if (ind.mixed()) {
-                add_error(state, ind, "ошибка", "Использование пробелов и табуляций в одном отступе.");
+                const char * message = params.log_level != Params::LogLevel::QUIET
+                        ? "Использование пробелов и табуляций в одном отступе."
+                        : "Использование табуляции.";
+                add_error("ошибка", message, ind);
                 exit_code = EXIT_CODE_MIXED_SPACES;
                 return;
 //                    std::cout << error_list.back() << std::endl;
             } else if (ind.tabs() != 0) {
-                add_error(state, ind, "ошибка",
-                          "Использование табуляций (ранее использовались пробелы).");
+                const char * message = params.log_level != Params::LogLevel::QUIET
+                        ? "Использование табуляций (ранее использовались пробелы)."
+                        : "Использование табуляции.";
+                add_error("ошибка", message, ind);
                 exit_code = EXIT_CODE_MIXED_SPACES;
                 return;
 //                    std::cout << error_list.back() << std::endl;
@@ -116,11 +132,10 @@ void Analyzer::analyze()
 
             } else {
                 if (state.empty() || rules[state.back()].count(Rules::Indent::ANY) == 0) {
-//                    const char * hint = params.log_level == Params::LogLevel::QUIET
-//                            ? "Несоответствие уровню вложенности."
-//                            : "";
-                    const char * hint = "";
-                    add_error(state, ind, standard, "ошибка", hint);
+                    const char * message = params.log_level == Params::LogLevel::QUIET
+                            ? "Различные отступы на одном уровне вложенности."  // In QUIET mode only this message would be shown
+                            : "";  // There would be full output provided by wrap_error
+                    add_error("ошибка", message, ind, true, standard);
                 }
 //                std::cout << error_list.back() << std::endl;
             }
@@ -130,58 +145,37 @@ void Analyzer::analyze()
     }
 }
 
-std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind, const Indent &standard
-                                  , const std::string &level, const std::string &assumption) const
+std::string Analyzer::wrap_error(const std::string &error_level, const std::string &assumption,
+                                 const Indent &wrong_indent, bool add_standard, const Indent &standard_indent) const
 {
     std::stringstream ss;
 
-    ss << "[Анализ отступов] строка "<< err_ind.follow().get_line() << ": ";
+    ss << params.message_header(wrong_indent.line()) << " ";
     if (params.log_level == Params::LogLevel::QUIET) {
-        ss << "некорректный отступ. "; // << assumption;
+        ss << assumption;
         return ss.str();
     }
-    ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped()
-       << ">. Ранее на том же уровне вложенности в строке " << standard.follow().get_line()
-       << " отступ ширины " << standard.len()
-       << ": <" << standard.image_escaped() << ">. "
-       << assumption;
+    ss << error_level << ": отступ ширины " << wrong_indent.len() << ": <" << wrong_indent.image_escaped()  << ">. ";
+    if (add_standard) {
+        ss << "Ранее на том же уровне вложенности в строке " << standard_indent.follow().get_line()
+           << " отступ ширины " << standard_indent.len()
+           << ": <" << standard_indent.image_escaped() << ">. ";
+    }
+    ss  << assumption;
     return ss.str();
 }
 
-std::string Analyzer::wrap_error(const StateVector &state, const Indent &err_ind
-                                  , const std::string &level, const std::string &assumption) const
-{
-    std::stringstream ss;
-    ss << "[Анализ отступов] строка "<< err_ind.follow().get_line() << ": ";
-    if (params.log_level == Params::LogLevel::QUIET) {
-        ss << "некорректный отступ. "; // << assumption;
-        return ss.str();
-    }
-    ss << level << ": отступ ширины " << err_ind.len() << ": <" << err_ind.image_escaped() << ">. "
-       << assumption;
-    return ss.str();
-}
-
-void Analyzer::add_error(const StateVector &state, const Indent &err_ind, const Indent &standard
-    , const std::string &level, const std::string &assumption)
+void Analyzer::add_error(const std::string &error_level, const std::string &assumption,
+                         const Indent &wrong_indent, bool add_standard, const Indent &standard_indent)
 {
     if (exit_code == EXIT_CODE_OK) {
         exit_code = EXIT_CODE_INDENT_ERROR;
     }
-    std::string message = wrap_error(state, err_ind, standard, level, assumption);
+    std::string message = wrap_error(error_level, assumption, wrong_indent, add_standard, standard_indent);
 //    std::cout << message << std::endl;
-    error_list[err_ind.follow().get_line()] = message;
+    error_list[wrong_indent.line()] = message;
 }
-void Analyzer::add_error(const StateVector &state, const Indent &err_ind
-    , const std::string &level, const std::string &assumption)
-{
-    if (exit_code == EXIT_CODE_OK) {
-        exit_code = EXIT_CODE_INDENT_ERROR;
-    }
-    std::string message = wrap_error(state, err_ind, level, assumption);
-//    std::cout << message << std::endl;
-    error_list[err_ind.follow().get_line()] = message;
-}
+
 
 std::string Analyzer::error_messages() const
 {

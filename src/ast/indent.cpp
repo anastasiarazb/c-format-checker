@@ -1,7 +1,7 @@
 #include "indent.hpp"
 #include "sstream"
 
-Indent::Indent(Token newline_tok) : Token(newline_tok)
+Indent::Indent(const Token &newline_tok) : Token(newline_tok)
 {
     update(newline_tok);
 }
