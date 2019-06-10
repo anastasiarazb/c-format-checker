@@ -9,3 +9,4 @@ CMakeLists.txt.*
 .directory
 *.scannerwork/
 *bw-output/
+*.log
