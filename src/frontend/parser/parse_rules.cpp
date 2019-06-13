@@ -5,8 +5,8 @@
 { \
     std::string ws;\
     for (int i = 0; i < level; ++i) ws +=  '>';  \
-    logs << ws << __VA_ARGS__ << std::endl; \
-    if (params.log_level == Params::LogLevel::DEBUG) std::cout << ws << __VA_ARGS__ << std::endl; \
+    /*logs << ws << __VA_ARGS__ << std::endl;*/ \
+    if (params.log_level == LogLevel::DEBUG) std::cout << ws << __VA_ARGS__ << std::endl; \
 }
 #define GREEN_TEXT(x) (x.empty() ? std::string("@@") : std::string("@\033[1;32m") + std::string(x) + "\033[0m@")
 

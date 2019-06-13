@@ -29,7 +29,7 @@ class Parser {
 
     Scanner &scanner;
     const Params &params;
-    std::ostream &logs;
+//    std::ostream &logs;
 //    std::stringstream logs;
     std::list<std::string> errors_list;
 
@@ -46,7 +46,7 @@ class Parser {
                             const std::vector<lexem::Type> &skip_until,
                             char const *file, int line);
 public:
-    explicit Parser(Scanner &scan, const Params &params, std::ostream &logs);
+    explicit Parser(Scanner &scan, const Params &params);
     State saveState();
     void restoreState();
     State restoreState(const State &backup);

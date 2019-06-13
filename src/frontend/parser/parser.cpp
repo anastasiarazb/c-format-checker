@@ -2,8 +2,8 @@
 #include "parser.hpp"
 
 
-Parser::Parser(Scanner &scanner, const Params &params, std::ostream &logs) :
-    scanner(scanner), params(params), logs(logs)
+Parser::Parser(Scanner &scanner, const Params &params) :
+    scanner(scanner), params(params)
 {
     lines.emplace_back(Indent());
 }

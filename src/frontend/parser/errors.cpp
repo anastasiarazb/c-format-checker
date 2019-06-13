@@ -40,8 +40,8 @@ void Parser::write_message(const std::string &message, char const *file, int lin
     std::stringstream ss;
     ss << std::string("[") << file << ", line " << line << "] " << message << ".";
     errors_list.push_back(ss.str());
-    logs << ss.str() << std::endl;
-    if (params.log_level == Params::LogLevel::DEBUG) {
+//    logs << ss.str() << std::endl;
+    if (params.log_level == LogLevel::DEBUG) {
         std::cout << ss.str() << std::endl;
     }
 }

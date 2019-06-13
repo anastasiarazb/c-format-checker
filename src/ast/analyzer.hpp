@@ -14,7 +14,7 @@
 class Analyzer: public TokenTable {
     Rules rules;
     const Params &params;
-    std::ostream &logs;
+//    std::ostream &logs;
     std::map<StateVector, std::vector<Indent>> stats;
     std::map<int, std::string> error_list;
     std::string wrap_error(const std::string &error_level, const std::string &assumption, const Indent &wrong_indent,
@@ -24,7 +24,7 @@ class Analyzer: public TokenTable {
     int exit_code = EXIT_CODE_OK;
 public:
     std::string str_stats() const;
-    explicit Analyzer(const TokenTable &other, Rules rules, const Params &params, std::ostream &logs);
+    explicit Analyzer(const TokenTable &other, Rules rules, const Params &params);
     explicit operator std::string() const;
     void preprocess_pass();
     void collect_stats();

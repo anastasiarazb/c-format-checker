@@ -7,13 +7,13 @@
 
 #define LOG(...) \
 { \
-    logs <<  __VA_ARGS__ << std::endl; \
-    if (params.log_level == Params::LogLevel::DEBUG) std::cout << __VA_ARGS__ << std::endl; \
+    /*logs <<  __VA_ARGS__ << std::endl;*/ \
+    if (params.log_level == LogLevel::DEBUG) std::cout << __VA_ARGS__ << std::endl; \
 }
 
 
-Analyzer::Analyzer(const TokenTable &other, Rules rules,  const Params &params, std::ostream &logs) :
-    TokenTable(other), rules(std::move(rules)), params(params), logs(logs)
+Analyzer::Analyzer(const TokenTable &other, Rules rules,  const Params &params) :
+    TokenTable(other), rules(std::move(rules)), params(params)
 {
     preprocess_pass();
     collect_stats();
@@ -102,7 +102,7 @@ void Analyzer::analyze()
                 const Line &parent = at(index-1);   // error cannot occur in the first line => [index-1] is ok
                 Indent parent_indent = parent.indent();
                 if (ind.len() < parent_indent.len()) {
-                    const char * message = params.log_level != Params::LogLevel::QUIET
+                    const char * message = params.log_level != LogLevel::QUIET
                                            ? "Продолжение выражения левее предыдущей строки."
                                            : "Ошибка отступа при переносе выражения.";
                     add_error("ошибка", message, ind);
@@ -110,7 +110,7 @@ void Analyzer::analyze()
             }
 
             if (ind.mixed()) {
-                const char * message = params.log_level != Params::LogLevel::QUIET
+                const char * message = params.log_level != LogLevel::QUIET
                         ? "Использование пробелов и табуляций в одном отступе."
                         : "Использование табуляции.";
                 add_error("ошибка", message, ind);
@@ -118,7 +118,7 @@ void Analyzer::analyze()
                 return;
 //                    std::cout << error_list.back() << std::endl;
             } else if (ind.tabs() != 0) {
-                const char * message = params.log_level != Params::LogLevel::QUIET
+                const char * message = params.log_level != LogLevel::QUIET
                         ? "Использование табуляций (ранее использовались пробелы)."
                         : "Использование табуляции.";
                 add_error("ошибка", message, ind);
@@ -132,7 +132,7 @@ void Analyzer::analyze()
 
             } else {
                 if (state.empty() || rules[state.back()].count(Rules::Indent::ANY) == 0) {
-                    const char * message = params.log_level == Params::LogLevel::QUIET
+                    const char * message = params.log_level == LogLevel::QUIET
                             ? "Различные отступы на одном уровне вложенности."  // In QUIET mode only this message would be shown
                             : "";  // There would be full output provided by wrap_error
                     add_error("ошибка", message, ind, true, standard);
@@ -151,7 +151,7 @@ std::string Analyzer::wrap_error(const std::string &error_level, const std::stri
     std::stringstream ss;
 
     ss << params.message_header(wrong_indent.line()) << " ";
-    if (params.log_level == Params::LogLevel::QUIET) {
+    if (params.log_level == LogLevel::QUIET) {
         ss << assumption;
         return ss.str();
     }
