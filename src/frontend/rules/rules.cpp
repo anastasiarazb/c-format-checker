@@ -64,7 +64,7 @@ json read_to_json(const char *path)
 {
     std::ifstream file (path, std::ios::in);
     if (!file) {
-        std::cout << "WARNING: No such file " << path << " use default rules instead." << std::endl;
+//        std::cout << "WARNING: No such file " << path << " use default rules instead." << std::endl;
         return json();
 //        exit(2);
     }

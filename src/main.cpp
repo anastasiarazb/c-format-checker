@@ -113,8 +113,15 @@ int main(int argc, char* argv[])
     while(arg_parser.hasNextParams()) {
         Params params = arg_parser.nextParams();
         int exit_code = process_file(params, rules);
-        if (exit_code == EXIT_CODE_INDENT_ERROR) {
-            statfile << params.source << std::endl;
+        switch (exit_code) {
+            case EXIT_CODE_MIXED_SPACES:
+                statfile << params.source << "   (tab.)" << std::endl;
+                break;
+            case EXIT_CODE_INDENT_ERROR:
+                statfile << params.source << std::endl;
+                break;
+            default:
+                break;
         }
     }
     statfile.close();
