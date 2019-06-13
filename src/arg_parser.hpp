@@ -12,7 +12,7 @@ class ArgParser {
     std::vector<std::string>::const_iterator source_file;
 //    std::string log_path = "cfc-output";
 //    Logger logs;
-    std::string   calling = "./c-format-checker [-f] ФАЙЛЫ [-q | -v | -d]";
+    std::string   calling = "c-format-checker [-f] ФАЙЛЫ [-q | -v | -d]";
 //    const std::string usage = "Usage: ./c-format-checker FILE [-q | -v | -d] [--logfile=FILE].\n"
 //                              "Use «./c-format-checker --help» for explanation.";
     // Message similarly to the message for "grep" in GNU/Linux console
@@ -40,7 +40,7 @@ class ArgParser {
         //    "текста грамматике, программа завершается с кодом " + std::to_string(EXIT_CODE_PARSING_ERROR) +
         //    ".\n"
             "ОПЦИИ\n"
-            "       -f, --file    Файл исходного текста программы на языке С (ключ -f не требуется, если этот аргумент идет первым).\n"
+            "       -f, --file    Файлы исходного текста программы на языке С (ключ -f не требуется, если этот аргумент идет первым).\n"
             "       -q, --quiet   Выводить кратко описание ошибок.\n"
             "       -v, --verbose Выводить развернутые описания ошибок (по умолчанию).\n"
             "       -d, --debug   Выводить отладочную информацию.\n"
