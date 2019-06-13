@@ -8,6 +8,9 @@
 #include <vector>
 
 class ArgParser {
+public:
+    LogLevel log_level = LogLevel::QUIET;
+private:
     std::vector<std::string> sources;
     std::vector<std::string>::const_iterator source_file;
 //    std::string log_path = "cfc-output";
@@ -41,9 +44,9 @@ class ArgParser {
         //    ".\n"
             "ОПЦИИ\n"
             "       -f, --file    Файлы исходного текста программы на языке С (ключ -f не требуется, если этот аргумент идет первым).\n"
-            "       -q, --quiet   Выводить кратко описание ошибок.\n"
-            "       -v, --verbose Выводить развернутые описания ошибок (по умолчанию).\n"
-            "       -d, --debug   Выводить отладочную информацию.\n"
+            "       -q, --quiet   Выводить кратко описание ошибок" + (log_level == LogLevel::QUIET ? " (по умолчанию).\n" : ".\n") +
+            "       -v, --verbose Выводить развернутые описания ошибок" + (log_level == LogLevel::VERBOSE ? " (по умолчанию).\n" : ".\n") +
+            "       -d, --debug   Выводить отладочную информацию" + (log_level == LogLevel::DEBUG ? " (по умолчанию).\n" : ".\n") +
             "           --help    Помощь.\n"
             //"       -l, --logfile Имя файла для записи отладочной информации (по умолчанию: " + log_path + ").\n"
             "СТАТУС ВЫХОДА\n       "
@@ -58,9 +61,7 @@ class ArgParser {
     ;
 
 
-
 public:
-    LogLevel log_level = LogLevel::VERBOSE;
     bool hasNextParams() const;
     Params nextParams();
     ArgParser(int argc, char* argv[]);
