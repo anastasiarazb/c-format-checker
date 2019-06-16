@@ -1,5 +1,5 @@
 bin/
-buils/
+build/
 cmake-build-debug/
 .idea/
 *.iml
